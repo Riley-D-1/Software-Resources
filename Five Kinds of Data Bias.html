@@ -1,0 +1,262 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Five Kinds of Data Bias</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: a picture book. One big drawing per page, one sentence under it. */
+:root{
+  --bg:#EEF3F8; --card:#FFFFFF; --ink:#1E2A3A; --muted:#55657A; --line:#C9D5E3;
+  --red:#E0484D; --green:#3A9E48; --yellow:#F2B630; --blue:#3B7DD8; --orange:#EE8A2E;
+  --skin:#F1C9A5; --robot:#8FA3BF; --sepia:#E9DCC3; --soft:#E3EBF4;
+  --display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111823; --card:#1A2331; --ink:#E8EEF6; --muted:#9AAABD; --line:#2E3B4E;
+  --red:#F06A6E; --green:#55BA62; --yellow:#F5C451; --blue:#6EA2F0; --orange:#F4A055;
+  --skin:#E2B892; --robot:#9FB2CC; --sepia:#4A4234; --soft:#223044; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#111823; --card:#1A2331; --ink:#E8EEF6; --muted:#9AAABD; --line:#2E3B4E;
+  --red:#F06A6E; --green:#55BA62; --yellow:#F5C451; --blue:#6EA2F0; --orange:#F4A055;
+  --skin:#E2B892; --robot:#9FB2CC; --sepia:#4A4234; --soft:#223044; color-scheme:dark }
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1.0625rem;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding-block:40px 64px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:28px}
+h1,h2{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2rem,6vw,3.2rem);font-weight:800}
+h2{font-size:clamp(1.6rem,4vw,2.1rem);font-weight:800}
+p{margin:0}
+.intro{display:grid;grid-template-columns:1fr 1.1fr;gap:24px;align-items:center}
+.intro p{font-size:1.25rem;max-width:30ch;margin-top:10px}
+.page{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:22px;
+  display:grid;grid-template-columns:1.15fr 1fr;gap:24px;align-items:center}
+.page:nth-of-type(even) .pic{order:2}
+.pic svg,.intro svg{width:100%;height:auto;display:block}
+.words{display:flex;flex-direction:column;gap:12px;min-width:0}
+.tag{font-family:var(--display);font-weight:600;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.big{font-size:1.2rem}
+.thinks{background:var(--soft);border-radius:14px;padding:10px 14px;font-family:var(--display);font-weight:600;font-size:1.1rem}
+.thinks span{display:block;font-family:var(--body);font-weight:400;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fix{color:var(--muted)}
+.fix b{color:var(--green)}
+svg text{font-family:var(--display);font-weight:600}
+.recap{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.recap div{border-top:4px solid var(--blue);padding-top:8px;font-size:.95rem}
+.recap b{display:block;font-family:var(--display);font-size:1.05rem}
+@media (max-width:720px){
+  .intro,.page{grid-template-columns:1fr}
+  .page:nth-of-type(even) .pic{order:0}
+  .recap{grid-template-columns:1fr 1fr}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="robot" viewBox="0 0 60 76">
+      <line x1="30" y1="2" x2="30" y2="12" style="stroke:var(--ink)" stroke-width="3"/>
+      <circle cx="30" cy="4" r="4" style="fill:var(--red)"/>
+      <rect x="8" y="12" width="44" height="30" rx="9" style="fill:var(--robot);stroke:var(--ink)" stroke-width="3"/>
+      <circle cx="22" cy="27" r="5" style="fill:var(--card);stroke:var(--ink)" stroke-width="2.5"/>
+      <circle cx="38" cy="27" r="5" style="fill:var(--card);stroke:var(--ink)" stroke-width="2.5"/>
+      <circle cx="22" cy="27" r="2" style="fill:var(--ink)"/>
+      <circle cx="38" cy="27" r="2" style="fill:var(--ink)"/>
+      <rect x="14" y="45" width="32" height="28" rx="6" style="fill:var(--robot);stroke:var(--ink)" stroke-width="3"/>
+      <rect x="23" y="52" width="14" height="8" rx="2" style="fill:var(--yellow)"/>
+    </symbol>
+    <symbol id="cat" viewBox="0 0 40 40">
+      <path d="M6 16 L9 3 L17 11 L23 11 L31 3 L34 16 Z" style="fill:inherit;stroke:var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="20" cy="22" r="15" style="fill:inherit;stroke:var(--ink)" stroke-width="2.5"/>
+      <circle cx="14" cy="20" r="2" style="fill:var(--ink)"/><circle cx="26" cy="20" r="2" style="fill:var(--ink)"/>
+      <path d="M17 27 Q20 30 23 27" style="fill:none;stroke:var(--ink)" stroke-width="2"/>
+    </symbol>
+    <symbol id="kid" viewBox="0 0 40 70">
+      <circle cx="20" cy="14" r="11" style="fill:var(--skin);stroke:var(--ink)" stroke-width="2.5"/>
+      <circle cx="16" cy="13" r="1.6" style="fill:var(--ink)"/><circle cx="24" cy="13" r="1.6" style="fill:var(--ink)"/>
+      <path d="M15 18 Q20 22 25 18" style="fill:none;stroke:var(--ink)" stroke-width="2"/>
+      <path d="M6 66 Q6 30 20 28 Q34 30 34 66 Z" style="fill:inherit;stroke:var(--ink)" stroke-width="2.5"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="wrap">
+
+  <section class="intro">
+    <div>
+      <h1>Why computers learn the wrong lesson</h1>
+      <p>A computer learns from a big pile of examples. If the pile is wonky, the computer learns wonky.</p>
+    </div>
+    <svg viewBox="0 0 360 200" role="img" aria-label="A pile of example pictures goes into a robot">
+      <g transform="rotate(-6 70 120)"><rect x="20" y="70" width="90" height="70" rx="8" style="fill:var(--card);stroke:var(--ink)" stroke-width="3"/><circle cx="65" cy="105" r="18" style="fill:var(--red)"/></g>
+      <g transform="rotate(5 90 110)"><rect x="50" y="60" width="90" height="70" rx="8" style="fill:var(--card);stroke:var(--ink)" stroke-width="3"/><use href="#cat" x="75" y="72" width="40" height="40" style="fill:var(--orange)"/></g>
+      <g><rect x="35" y="95" width="90" height="70" rx="8" style="fill:var(--card);stroke:var(--ink)" stroke-width="3"/><use href="#kid" x="66" y="100" width="30" height="60" style="fill:var(--blue)"/></g>
+      <text x="80" y="190" text-anchor="middle" font-size="16" style="fill:var(--muted)">examples</text>
+      <path d="M160 115 L225 115" style="stroke:var(--ink);fill:none" stroke-width="5" stroke-linecap="round"/>
+      <path d="M215 102 L230 115 L215 128" style="stroke:var(--ink);fill:none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <use href="#robot" x="240" y="40" width="100" height="130"/>
+      <text x="290" y="190" text-anchor="middle" font-size="16" style="fill:var(--muted)">computer</text>
+    </svg>
+  </section>
+
+  <!-- 1 HUMAN BIAS -->
+  <section class="page">
+    <div class="pic">
+      <svg viewBox="0 0 360 230" role="img" aria-label="A person says green apples are yucky and stamps BAD on a green apple">
+        <use href="#kid" x="20" y="80" width="80" height="140" style="fill:var(--blue)"/>
+        <rect x="10" y="10" width="150" height="56" rx="16" style="fill:var(--soft);stroke:var(--ink)" stroke-width="2.5"/>
+        <path d="M55 66 L62 84 L75 66" style="fill:var(--soft);stroke:var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+        <text x="85" y="46" text-anchor="middle" font-size="22" style="fill:var(--ink)">Green? Yuck!</text>
+        <!-- red apple GOOD -->
+        <circle cx="185" cy="160" r="34" style="fill:var(--red);stroke:var(--ink)" stroke-width="3"/>
+        <path d="M185 126 Q188 112 196 108" style="fill:none;stroke:var(--ink)" stroke-width="3"/>
+        <rect x="155" y="200" width="60" height="24" rx="6" style="fill:var(--green)"/>
+        <text x="185" y="218" text-anchor="middle" font-size="16" style="fill:#fff">GOOD</text>
+        <!-- green apple BAD -->
+        <circle cx="290" cy="160" r="34" style="fill:var(--green);stroke:var(--ink)" stroke-width="3"/>
+        <path d="M290 126 Q293 112 301 108" style="fill:none;stroke:var(--ink)" stroke-width="3"/>
+        <rect x="260" y="200" width="60" height="24" rx="6" style="fill:var(--red)"/>
+        <text x="290" y="218" text-anchor="middle" font-size="16" style="fill:#fff">BAD</text>
+      </svg>
+    </div>
+    <div class="words">
+      <div class="tag">1 · Human bias</div>
+      <h2>The teacher's own opinion sneaks in</h2>
+      <p class="big">A person labels the examples, and their likes and dislikes go into the labels.</p>
+      <p class="thinks"><span>So the computer thinks</span>“Green apples are bad apples.”</p>
+      <p class="fix"><b>Fix:</b> have lots of different people label, and check each other's work.</p>
+    </div>
+  </section>
+
+  <!-- 2 DATASET SOURCE BIAS -->
+  <section class="page">
+    <div class="pic">
+      <svg viewBox="0 0 360 230" role="img" aria-label="All cat pictures come from one website and they are all orange; the robot is confused by a black cat">
+        <rect x="14" y="20" width="170" height="150" rx="12" style="fill:var(--card);stroke:var(--ink)" stroke-width="3"/>
+        <rect x="14" y="20" width="170" height="30" rx="12" style="fill:var(--yellow);stroke:var(--ink)" stroke-width="3"/>
+        <circle cx="32" cy="35" r="4" style="fill:var(--ink)"/><circle cx="46" cy="35" r="4" style="fill:var(--ink)"/>
+        <text x="120" y="41" text-anchor="middle" font-size="15" style="fill:#1E2A3A">OrangeCats.com</text>
+        <use href="#cat" x="28" y="62" width="44" height="44" style="fill:var(--orange)"/>
+        <use href="#cat" x="78" y="62" width="44" height="44" style="fill:var(--orange)"/>
+        <use href="#cat" x="128" y="62" width="44" height="44" style="fill:var(--orange)"/>
+        <use href="#cat" x="53" y="112" width="44" height="44" style="fill:var(--orange)"/>
+        <use href="#cat" x="103" y="112" width="44" height="44" style="fill:var(--orange)"/>
+        <text x="99" y="200" text-anchor="middle" font-size="16" style="fill:var(--muted)">only one place</text>
+        <use href="#robot" x="215" y="80" width="80" height="104"/>
+        <use href="#cat" x="300" y="140" width="50" height="50" style="fill:#2A2A2A"/>
+        <text x="255" y="62" text-anchor="middle" font-size="44" style="fill:var(--red)">?</text>
+      </svg>
+    </div>
+    <div class="words">
+      <div class="tag">2 · Dataset source bias</div>
+      <h2>Every example came from the same place</h2>
+      <p class="big">One website, one school, one country. That place is not the whole world.</p>
+      <p class="thinks"><span>So the computer thinks</span>“Cats are orange. A black cat is not a cat.”</p>
+      <p class="fix"><b>Fix:</b> collect examples from many different places.</p>
+    </div>
+  </section>
+
+  <!-- 3 SAMPLING BIAS -->
+  <section class="page">
+    <div class="pic">
+      <svg viewBox="0 0 360 230" role="img" aria-label="Asking only people at an ice cream shop what their favourite food is">
+        <rect x="150" y="70" width="200" height="140" style="fill:var(--card);stroke:var(--ink)" stroke-width="3"/>
+        <path d="M140 70 L360 70 L345 40 L155 40 Z" style="fill:var(--red);stroke:var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+        <text x="250" y="62" text-anchor="middle" font-size="16" style="fill:#fff">ICE CREAM</text>
+        <use href="#kid" x="165" y="110" width="50" height="95" style="fill:var(--yellow)"/>
+        <use href="#kid" x="225" y="110" width="50" height="95" style="fill:var(--green)"/>
+        <use href="#kid" x="285" y="110" width="50" height="95" style="fill:var(--orange)"/>
+        <rect x="160" y="84" width="180" height="28" rx="10" style="fill:var(--soft)"/>
+        <text x="250" y="104" text-anchor="middle" font-size="16" style="fill:var(--ink)">“Ice cream!” ×3</text>
+        <use href="#kid" x="20" y="110" width="55" height="100" style="fill:var(--blue)"/>
+        <rect x="6" y="18" width="128" height="72" rx="14" style="fill:var(--soft);stroke:var(--ink)" stroke-width="2.5"/>
+        <text x="70" y="46" text-anchor="middle" font-size="15" style="fill:var(--ink)">What's everyone's</text>
+        <text x="70" y="68" text-anchor="middle" font-size="15" style="fill:var(--ink)">favourite food?</text>
+      </svg>
+    </div>
+    <div class="words">
+      <div class="tag">3 · Sampling bias</div>
+      <h2>You only asked some people</h2>
+      <p class="big">The people you picked are not like everybody else.</p>
+      <p class="thinks"><span>So the computer thinks</span>“Everyone's favourite food is ice cream.”</p>
+      <p class="fix"><b>Fix:</b> pick people fairly, by chance, from everywhere.</p>
+    </div>
+  </section>
+
+  <!-- 4 HISTORICAL BIAS -->
+  <section class="page">
+    <div class="pic">
+      <svg viewBox="0 0 360 230" role="img" aria-label="An old 1965 photo of doctors who are all men; the robot doubts a woman doctor today">
+        <rect x="10" y="20" width="190" height="150" rx="6" style="fill:var(--sepia);stroke:var(--ink)" stroke-width="4"/>
+        <text x="105" y="45" text-anchor="middle" font-size="16" style="fill:var(--ink)">DOCTORS · 1965</text>
+        <g>
+          <use href="#kid" x="25" y="58" width="50" height="95" style="fill:var(--muted)"/>
+          <use href="#kid" x="80" y="58" width="50" height="95" style="fill:var(--muted)"/>
+          <use href="#kid" x="135" y="58" width="50" height="95" style="fill:var(--muted)"/>
+          <path d="M44 72 L56 72 M99 72 L111 72 M154 72 L166 72" style="stroke:var(--ink)" stroke-width="3" stroke-linecap="round"/>
+        </g>
+        <text x="105" y="196" text-anchor="middle" font-size="15" style="fill:var(--muted)">all men, back then</text>
+        <use href="#robot" x="215" y="20" width="62" height="80"/>
+        <rect x="205" y="104" width="86" height="28" rx="10" style="fill:var(--soft)"/>
+        <text x="248" y="124" text-anchor="middle" font-size="15" style="fill:var(--ink)">Doctor? No.</text>
+        <!-- woman doctor today -->
+        <path d="M292 104 Q290 80 310 76 Q330 80 328 104 L330 130 L290 130 Z" style="fill:var(--ink)"/>
+        <use href="#kid" x="285" y="78" width="50" height="130" style="fill:var(--card)"/>
+        <path d="M300 124 Q300 150 310 150 Q320 150 320 124" style="fill:none;stroke:var(--blue)" stroke-width="3"/>
+        <circle cx="310" cy="153" r="4" style="fill:var(--blue)"/>
+        <text x="310" y="224" text-anchor="middle" font-size="15" style="fill:var(--muted)">today</text>
+      </svg>
+    </div>
+    <div class="words">
+      <div class="tag">4 · Historical bias</div>
+      <h2>Old examples copy old unfairness</h2>
+      <p class="big">The data is true about the past, but the past wasn't fair. The computer copies it.</p>
+      <p class="thinks"><span>So the computer thinks</span>“Doctors are men.”</p>
+      <p class="fix"><b>Fix:</b> spot the old pattern and choose not to copy it.</p>
+    </div>
+  </section>
+
+  <!-- 5 MEASUREMENT BIAS -->
+  <section class="page">
+    <div class="pic">
+      <svg viewBox="0 0 360 230" role="img" aria-label="A thermometer sitting in hot sun reads 45 degrees while a person nearby is cold">
+        <circle cx="60" cy="60" r="30" style="fill:var(--yellow);stroke:var(--ink)" stroke-width="3"/>
+        <g style="stroke:var(--yellow)" stroke-width="5" stroke-linecap="round">
+          <line x1="60" y1="12" x2="60" y2="0"/><line x1="60" y1="108" x2="60" y2="120"/>
+          <line x1="12" y1="60" x2="0" y2="60"/><line x1="108" y1="60" x2="120" y2="60"/>
+          <line x1="26" y1="26" x2="18" y2="18"/><line x1="94" y1="94" x2="102" y2="102"/>
+          <line x1="94" y1="26" x2="102" y2="18"/><line x1="26" y1="94" x2="18" y2="102"/>
+        </g>
+        <path d="M95 90 L130 125" style="stroke:var(--yellow)" stroke-width="10" stroke-linecap="round" opacity=".6"/>
+        <rect x="130" y="60" width="30" height="120" rx="15" style="fill:var(--card);stroke:var(--ink)" stroke-width="3"/>
+        <rect x="139" y="72" width="12" height="100" rx="6" style="fill:var(--red)"/>
+        <circle cx="145" cy="185" r="20" style="fill:var(--red);stroke:var(--ink)" stroke-width="3"/>
+        <text x="145" y="48" text-anchor="middle" font-size="24" style="fill:var(--red)">45°C</text>
+        <use href="#kid" x="240" y="85" width="70" height="125" style="fill:var(--blue)"/>
+        <path d="M253 99 Q275 66 297 99 Z" style="fill:var(--green);stroke:var(--ink)" stroke-width="2.5"/>
+        <circle cx="275" cy="72" r="6" style="fill:var(--green);stroke:var(--ink)" stroke-width="2"/>
+        <rect x="205" y="30" width="80" height="30" rx="10" style="fill:var(--soft)"/>
+        <text x="245" y="51" text-anchor="middle" font-size="17" style="fill:var(--ink)">Brrr…</text>
+      </svg>
+    </div>
+    <div class="words">
+      <div class="tag">5 · Measurement bias</div>
+      <h2>The measuring tool is off</h2>
+      <p class="big">If the ruler, sensor or survey is wonky, every number it gives is a bit wrong.</p>
+      <p class="thinks"><span>So the computer thinks</span>“It's 45°C. Wear shorts!”</p>
+      <p class="fix"><b>Fix:</b> check your tools, and measure everything the same way.</p>
+    </div>
+  </section>
+
+  <section class="recap" aria-label="Recap">
+    <div><b>Human</b>whose opinion?</div>
+    <div><b>Source</b>which place?</div>
+    <div><b>Sampling</b>which people?</div>
+    <div><b>Historical</b>which time?</div>
+    <div><b>Measurement</b>which tool?</div>
+  </section>
+
+</main>
+
+</body></html>

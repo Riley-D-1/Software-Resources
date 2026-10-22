@@ -1,0 +1,288 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Four Kinds of Automation</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: one picture card per idea, stacked; big drawing on the left, three short lines on the right; a "spot the difference" strip at the end */
+:root{
+  --bg:#F3F5F9; --card:#FFFFFF; --ink:#1C2333; --soft:#5B6478; --line:#D9DEE8;
+  --dev:#1F7A8C; --rpa:#E07A1F; --bpa:#3A8F4B; --ml:#8A4FBF;
+  --devT:#E3F2F5; --rpaT:#FCEEDF; --bpaT:#E4F3E7; --mlT:#F1E8FA;
+  --display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12161F; --card:#1B2130; --ink:#EEF1F7; --soft:#A3ABBD; --line:#2E3648;
+  --dev:#4FB8CC; --rpa:#F29A4A; --bpa:#5FC173; --ml:#B88AE6;
+  --devT:#173440; --rpaT:#3A2A1A; --bpaT:#1B3322; --mlT:#2C2140; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12161F; --card:#1B2130; --ink:#EEF1F7; --soft:#A3ABBD; --line:#2E3648;
+  --dev:#4FB8CC; --rpa:#F29A4A; --bpa:#5FC173; --ml:#B88AE6;
+  --devT:#173440; --rpaT:#3A2A1A; --bpaT:#1B3322; --mlT:#2C2140; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:980px;margin:0 auto;padding-block:40px 64px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:28px}
+header h1{font-family:var(--display);font-weight:800;font-size:clamp(2rem,5vw,3.1rem);line-height:1.05;margin:0;text-wrap:balance}
+header p{margin:8px 0 0;color:var(--soft);max-width:60ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{font-family:var(--display);font-weight:600;padding:2px 12px;border-radius:999px;font-size:.95rem}
+.c-dev{background:var(--devT);color:var(--dev)} .c-rpa{background:var(--rpaT);color:var(--rpa)}
+.c-bpa{background:var(--bpaT);color:var(--bpa)} .c-ml{background:var(--mlT);color:var(--ml)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;
+  display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:24px;align-items:center}
+.card .pic{border-radius:16px;padding:10px}
+.card svg{width:100%;height:auto;display:block}
+.txt{min-width:0}
+.tag{font-family:var(--display);font-weight:800;font-size:2.4rem;line-height:1;margin:0}
+.full{color:var(--soft);font-size:.95rem;margin:4px 0 14px;letter-spacing:.02em}
+.big{font-family:var(--display);font-weight:600;font-size:1.35rem;line-height:1.25;margin:0 0 12px;text-wrap:balance}
+.txt ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.txt li{padding-left:22px;position:relative}
+.txt li::before{content:"";position:absolute;left:4px;top:.6em;width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.55}
+.ex{margin-top:14px;font-size:.93rem;color:var(--soft);border-top:1px dashed var(--line);padding-top:10px}
+.ex b{color:var(--ink)}
+
+.dev .tag,.dev li{color:var(--dev)} .dev .pic{background:var(--devT)}
+.rpa .tag,.rpa li{color:var(--rpa)} .rpa .pic{background:var(--rpaT)}
+.bpa .tag,.bpa li{color:var(--bpa)} .bpa .pic{background:var(--bpaT)}
+.ml  .tag,.ml  li{color:var(--ml)}  .ml  .pic{background:var(--mlT)}
+.txt li span{color:var(--ink)}
+
+/* svg helpers */
+.s-ink{fill:var(--ink)} .s-card{fill:var(--card)} .s-line{stroke:var(--line)}
+.lbl{font-family:var(--display);font-weight:600;font-size:15px;fill:var(--ink)}
+.lbl-s{font-family:var(--body);font-size:12px;fill:var(--soft)}
+
+h2{font-family:var(--display);font-weight:800;font-size:1.7rem;margin:12px 0 0}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.mini{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.mini .q{font-family:var(--display);font-weight:800;font-size:1.3rem}
+.mini .who{font-size:.85rem;color:var(--soft);text-transform:uppercase;letter-spacing:.06em}
+.mini .a{font-size:1rem}
+.mini.dev .q{color:var(--dev)} .mini.rpa .q{color:var(--rpa)} .mini.bpa .q{color:var(--bpa)} .mini.ml .q{color:var(--ml)}
+.tip{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px;color:var(--soft)}
+.tip b{color:var(--ink)}
+
+@media (max-width:760px){
+  .card{grid-template-columns:1fr;padding:18px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:420px){.grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){
+  .spin{transform-origin:center;transform-box:fill-box;animation:spin 9s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Four ways to make computers do the boring jobs</h1>
+  <p>Imagine a cake shop. Each idea below is a different helper that keeps the shop running.</p>
+  <div class="chips"><span class="chip c-dev">DevOps</span><span class="chip c-rpa">RPA</span><span class="chip c-bpa">BPA</span><span class="chip c-ml">MLOps</span></div>
+</header>
+
+<!-- DevOps -->
+<section class="card dev">
+  <div class="pic">
+    <svg viewBox="0 0 420 240" role="img" aria-label="An infinity loop: Build, Test, Release on the left loop, Run and Watch on the right loop">
+      <path d="M210 120 C 160 40, 50 40, 50 120 C 50 200, 160 200, 210 120 C 260 40, 370 40, 370 120 C 370 200, 260 200, 210 120 Z"
+            fill="none" stroke="var(--dev)" stroke-width="22" stroke-linecap="round" opacity=".9"/>
+      <path d="M210 120 C 160 40, 50 40, 50 120 C 50 200, 160 200, 210 120 C 260 40, 370 40, 370 120 C 370 200, 260 200, 210 120 Z"
+            fill="none" stroke="var(--card)" stroke-width="2" stroke-dasharray="6 10"/>
+      <!-- stops -->
+      <g>
+        <circle cx="105" cy="62" r="24" class="s-card" stroke="var(--dev)" stroke-width="3"/>
+        <text x="105" y="68" text-anchor="middle" font-size="20">🛠</text>
+        <text x="105" y="26" text-anchor="middle" class="lbl">Build</text>
+        <circle cx="50" cy="120" r="24" class="s-card" stroke="var(--dev)" stroke-width="3"/>
+        <text x="50" y="127" text-anchor="middle" font-size="20">🧪</text>
+        <text x="50" y="168" text-anchor="middle" class="lbl">Test</text>
+        <circle cx="105" cy="178" r="24" class="s-card" stroke="var(--dev)" stroke-width="3"/>
+        <text x="105" y="185" text-anchor="middle" font-size="20">🚀</text>
+        <text x="105" y="226" text-anchor="middle" class="lbl">Release</text>
+        <circle cx="315" cy="62" r="24" class="s-card" stroke="var(--dev)" stroke-width="3"/>
+        <text x="315" y="68" text-anchor="middle" font-size="20">⚙️</text>
+        <text x="315" y="26" text-anchor="middle" class="lbl">Run</text>
+        <circle cx="315" cy="178" r="24" class="s-card" stroke="var(--dev)" stroke-width="3"/>
+        <text x="315" y="185" text-anchor="middle" font-size="20">👀</text>
+        <text x="315" y="226" text-anchor="middle" class="lbl">Watch</text>
+        <circle cx="370" cy="120" r="24" class="s-card" stroke="var(--dev)" stroke-width="3"/>
+        <text x="370" y="127" text-anchor="middle" font-size="20">💬</text>
+      </g>
+      <text x="210" y="125" text-anchor="middle" class="lbl-s">Dev + Ops</text>
+    </svg>
+  </div>
+  <div class="txt">
+    <p class="tag">DevOps</p>
+    <p class="full">Development + Operations</p>
+    <p class="big">The bakers and the shop staff become one team that never stops looping.</p>
+    <ul>
+      <li><span>Coders (Dev) and the people who run the servers (Ops) work together.</span></li>
+      <li><span>Robots build, test and ship new code automatically (CI/CD).</span></li>
+      <li><span>Small changes, shipped often, watched closely.</span></li>
+    </ul>
+    <p class="ex"><b>Example:</b> you push a fix to GitHub, tests run by themselves, and the app updates within minutes.</p>
+  </div>
+</section>
+
+<!-- RPA -->
+<section class="card rpa">
+  <div class="pic">
+    <svg viewBox="0 0 420 240" role="img" aria-label="A robot sitting at a computer, copying numbers from an email into a spreadsheet">
+      <!-- screen -->
+      <rect x="150" y="30" width="240" height="150" rx="12" class="s-card" stroke="var(--rpa)" stroke-width="3"/>
+      <rect x="235" y="180" width="70" height="16" fill="var(--rpa)" opacity=".5"/>
+      <rect x="205" y="196" width="130" height="8" rx="4" fill="var(--rpa)" opacity=".7"/>
+      <!-- email window -->
+      <rect x="165" y="48" width="95" height="112" rx="6" fill="var(--rpaT)"/>
+      <text x="212" y="66" text-anchor="middle" class="lbl-s">✉ Email</text>
+      <rect x="175" y="78" width="75" height="7" rx="3" fill="var(--soft)" opacity=".4"/>
+      <rect x="175" y="92" width="55" height="7" rx="3" fill="var(--soft)" opacity=".4"/>
+      <rect x="175" y="108" width="40" height="14" rx="3" fill="var(--rpa)"/>
+      <text x="195" y="119" text-anchor="middle" font-family="var(--body)" font-size="10" fill="#fff">$42</text>
+      <!-- sheet window -->
+      <rect x="280" y="48" width="95" height="112" rx="6" fill="var(--rpaT)"/>
+      <text x="327" y="66" text-anchor="middle" class="lbl-s">▦ Sheet</text>
+      <g stroke="var(--soft)" stroke-opacity=".4" stroke-width="1">
+        <line x1="290" y1="80" x2="365" y2="80"/><line x1="290" y1="98" x2="365" y2="98"/>
+        <line x1="290" y1="116" x2="365" y2="116"/><line x1="290" y1="134" x2="365" y2="134"/>
+        <line x1="327" y1="74" x2="327" y2="150"/>
+      </g>
+      <rect x="329" y="117" width="34" height="16" fill="var(--rpa)"/>
+      <text x="346" y="129" text-anchor="middle" font-family="var(--body)" font-size="10" fill="#fff">$42</text>
+      <!-- arrow -->
+      <path d="M218 112 C 250 140, 300 140, 326 126" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-dasharray="5 5"/>
+      <path d="M318 120 l10 6 -10 6" fill="none" stroke="var(--ink)" stroke-width="2.5"/>
+      <!-- robot -->
+      <g>
+        <line x1="72" y1="40" x2="72" y2="58" stroke="var(--rpa)" stroke-width="4"/>
+        <circle cx="72" cy="36" r="7" fill="var(--rpa)"/>
+        <rect x="38" y="58" width="68" height="56" rx="14" fill="var(--rpa)"/>
+        <circle cx="58" cy="84" r="8" class="s-card"/><circle cx="86" cy="84" r="8" class="s-card"/>
+        <circle cx="60" cy="84" r="3.5" class="s-ink"/><circle cx="88" cy="84" r="3.5" class="s-ink"/>
+        <rect x="56" y="100" width="32" height="5" rx="2.5" class="s-card"/>
+        <rect x="30" y="120" width="84" height="70" rx="14" fill="var(--rpa)" opacity=".85"/>
+        <path d="M110 140 L 160 150" stroke="var(--rpa)" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="165" cy="151" r="8" class="s-ink"/>
+        <text x="72" y="222" text-anchor="middle" class="lbl">click · copy · paste</text>
+      </g>
+    </svg>
+  </div>
+  <div class="txt">
+    <p class="tag">RPA</p>
+    <p class="full">Robotic Process Automation</p>
+    <p class="big">A software robot that uses the computer exactly like a person would.</p>
+    <ul>
+      <li><span>It clicks, types, copies and pastes on the screen.</span></li>
+      <li><span>Great for boring, repeated jobs with clear rules.</span></li>
+      <li><span>Copies a human's steps. It does not redesign the job.</span></li>
+    </ul>
+    <p class="ex"><b>Example:</b> every morning a bot opens 50 order emails and types each total into the sales spreadsheet.</p>
+  </div>
+</section>
+
+<!-- BPA -->
+<section class="card bpa">
+  <div class="pic">
+    <svg viewBox="0 0 420 240" role="img" aria-label="A pipeline of connected steps: order, check stock, pay, send receipt, all linked automatically">
+      <g stroke="var(--bpa)" stroke-width="8" stroke-linecap="round" fill="none">
+        <path d="M70 80 H 200"/><path d="M200 80 H 330"/>
+        <path d="M330 80 C 380 80, 380 170, 330 170"/><path d="M330 170 H 200"/><path d="M200 170 H 90"/>
+      </g>
+      <g fill="var(--bpa)">
+        <path d="M140 72 l12 8 -12 8z"/><path d="M270 72 l12 8 -12 8z"/>
+        <path d="M268 162 l-12 8 12 8z"/><path d="M150 162 l-12 8 12 8z"/>
+      </g>
+      <g>
+        <rect x="30" y="52" width="80" height="56" rx="12" class="s-card" stroke="var(--bpa)" stroke-width="3"/>
+        <text x="70" y="78" text-anchor="middle" font-size="20">🧾</text>
+        <text x="70" y="99" text-anchor="middle" class="lbl-s">Order in</text>
+        <rect x="160" y="52" width="80" height="56" rx="12" class="s-card" stroke="var(--bpa)" stroke-width="3"/>
+        <text x="200" y="78" text-anchor="middle" font-size="20">📦</text>
+        <text x="200" y="99" text-anchor="middle" class="lbl-s">Check stock</text>
+        <rect x="290" y="52" width="80" height="56" rx="12" class="s-card" stroke="var(--bpa)" stroke-width="3"/>
+        <text x="330" y="78" text-anchor="middle" font-size="20">💳</text>
+        <text x="330" y="99" text-anchor="middle" class="lbl-s">Take payment</text>
+        <rect x="290" y="142" width="80" height="56" rx="12" class="s-card" stroke="var(--bpa)" stroke-width="3"/>
+        <text x="330" y="168" text-anchor="middle" font-size="20">🚚</text>
+        <text x="330" y="189" text-anchor="middle" class="lbl-s">Book delivery</text>
+        <rect x="160" y="142" width="80" height="56" rx="12" class="s-card" stroke="var(--bpa)" stroke-width="3"/>
+        <text x="200" y="168" text-anchor="middle" font-size="20">📧</text>
+        <text x="200" y="189" text-anchor="middle" class="lbl-s">Email receipt</text>
+        <circle cx="70" cy="170" r="24" fill="var(--bpa)"/>
+        <path d="M58 170 l8 8 16 -16" stroke="var(--card)" stroke-width="5" fill="none" stroke-linecap="round"/>
+      </g>
+      <text x="210" y="228" text-anchor="middle" class="lbl">the whole job, start to finish</text>
+    </svg>
+  </div>
+  <div class="txt">
+    <p class="tag">BPA</p>
+    <p class="full">Business Process Automation</p>
+    <p class="big">Redesign the whole job so the systems pass work to each other by themselves.</p>
+    <ul>
+      <li><span>Covers a full process from start to end, not one screen.</span></li>
+      <li><span>Apps talk directly through APIs and workflows.</span></li>
+      <li><span>People only step in for decisions and problems.</span></li>
+    </ul>
+    <p class="ex"><b>Example:</b> a cake order on the website checks stock, charges the card, books the van and emails a receipt. Nobody touches it.</p>
+  </div>
+</section>
+
+<!-- MLOps -->
+<section class="card ml">
+  <div class="pic">
+    <svg viewBox="0 0 420 240" role="img" aria-label="A loop around a brain: collect data, train model, test, deploy, monitor, then retrain">
+      <circle cx="210" cy="120" r="88" fill="none" stroke="var(--ml)" stroke-width="14" opacity=".35"/>
+      <circle cx="210" cy="120" r="88" fill="none" stroke="var(--ml)" stroke-width="3" stroke-dasharray="4 9" class="spin"/>
+      <!-- brain -->
+      <g>
+        <circle cx="210" cy="120" r="38" fill="var(--ml)"/>
+        <path d="M196 104 c-10 4 -10 18 0 20 M224 104 c10 4 10 18 0 20 M210 94 v52 M198 134 c6 6 18 6 24 0"
+              stroke="var(--card)" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </g>
+      <g>
+        <circle cx="210" cy="32" r="22" class="s-card" stroke="var(--ml)" stroke-width="3"/>
+        <text x="210" y="39" text-anchor="middle" font-size="18">📊</text>
+        <text x="246" y="28" class="lbl">Data</text>
+        <circle cx="294" cy="93" r="22" class="s-card" stroke="var(--ml)" stroke-width="3"/>
+        <text x="294" y="100" text-anchor="middle" font-size="18">🏋️</text>
+        <text x="322" y="98" class="lbl">Train</text>
+        <circle cx="262" cy="192" r="22" class="s-card" stroke="var(--ml)" stroke-width="3"/>
+        <text x="262" y="199" text-anchor="middle" font-size="18">✅</text>
+        <text x="290" y="222" class="lbl">Test</text>
+        <circle cx="158" cy="192" r="22" class="s-card" stroke="var(--ml)" stroke-width="3"/>
+        <text x="158" y="199" text-anchor="middle" font-size="18">🚀</text>
+        <text x="72" y="222" class="lbl">Deploy</text>
+        <circle cx="126" cy="93" r="22" class="s-card" stroke="var(--ml)" stroke-width="3"/>
+        <text x="126" y="100" text-anchor="middle" font-size="18">📉</text>
+        <text x="22" y="90" class="lbl">Watch for</text>
+        <text x="22" y="108" class="lbl">drift</text>
+      </g>
+    </svg>
+  </div>
+  <div class="txt">
+    <p class="tag">MLOps</p>
+    <p class="full">Machine Learning Operations</p>
+    <p class="big">DevOps for a robot brain. The brain needs fresh lessons or it slowly gets worse.</p>
+    <ul>
+      <li><span>Looks after the data, the training and the model, not just code.</span></li>
+      <li><span>Watches if predictions start going wrong (model drift).</span></li>
+      <li><span>Retrains and re-releases the model automatically.</span></li>
+    </ul>
+    <p class="ex"><b>Example:</b> a model predicts how many cakes sell each day. Winter arrives, guesses drift, so it retrains on new sales data.</p>
+  </div>
+</section>
+
+<h2>Spot the difference</h2>
+<div class="grid">
+  <div class="mini dev"><span class="q">DevOps</span><span class="who">automates</span><span class="a">making and shipping <b>software</b></span></div>
+  <div class="mini rpa"><span class="q">RPA</span><span class="who">automates</span><span class="a">a person's <b>clicks and typing</b></span></div>
+  <div class="mini bpa"><span class="q">BPA</span><span class="who">automates</span><span class="a">a whole <b>business process</b></span></div>
+  <div class="mini ml"><span class="q">MLOps</span><span class="who">automates</span><span class="a">building and caring for <b>ML models</b></span></div>
+</div>
+<p class="tip"><b>One-line memory trick:</b> RPA copies the human. BPA redesigns the job. DevOps ships the code. MLOps keeps the AI brain fresh. Add machine learning to RPA or BPA and the bots can handle messy stuff too, like reading handwritten forms or deciding which emails are urgent.</p>
+</div>
+
+</body></html>

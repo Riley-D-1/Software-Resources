@@ -1,0 +1,389 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>The Internet Post Office</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  /* layout: a vertical "layer cake" of 7 helper-cards (warm→cool gradient pipe running
+     behind them) stacked between Jamie and Alex; a wavy wire crossing in the middle
+     with a traveling dot shows the handoff, then a mirrored mini recap undoes it all */
+  :root{
+    --bg:#FFF8F0;
+    --fg:#2B2420;
+    --muted:#8A7F74;
+    --card-bg:#FFFFFF;
+    --line:#EFE2D3;
+    --accent:#F2785C;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1B1F2B;
+      --fg:#F3EFE9;
+      --muted:#A9A2B9;
+      --card-bg:#262B3B;
+      --line:#333A4F;
+      --accent:#F4A261;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1B1F2B;
+    --fg:#F3EFE9;
+    --muted:#A9A2B9;
+    --card-bg:#262B3B;
+    --line:#333A4F;
+    --accent:#F4A261;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body{
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "Nunito", ui-rounded, "Segoe UI", sans-serif;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 28px 48px;
+  }
+  h1, h2, .lede, .crossing-label, .final-bubble p { font-family: "Baloo 2", ui-rounded, sans-serif; }
+
+  .page{ max-width: 620px; margin: 0 auto; }
+
+  .hero{ text-align:center; padding-block: 4px 28px; }
+  .hero h1{
+    font-size: clamp(1.9rem, 6vw, 2.6rem);
+    margin: 0 0 10px;
+    text-wrap: balance;
+  }
+  .hero .lede{
+    margin: 0 auto 18px;
+    max-width: 30em;
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+  .kids{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 14px;
+  }
+  .kid{ display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .kid svg{ width:48px; height:48px; color: var(--accent); }
+  .kid span{ font-weight:800; font-size:.85rem; }
+  .kids-arrow{ color: var(--muted); font-size:1.4rem; }
+
+  .stack{
+    position: relative;
+    display:flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 10px;
+  }
+  .stack::before{
+    content:"";
+    position:absolute;
+    left: 30px;
+    top: 6px;
+    bottom: 6px;
+    width: 4px;
+    border-radius: 4px;
+    background: linear-gradient(#F2785C,#F4A261,#E9C46A,#8AB17D,#4D908E,#577590,#355070);
+    opacity:.55;
+  }
+
+  .layer{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px 18px 14px 14px;
+    min-width: 0;
+  }
+  .badge{
+    flex: none;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--c);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .badge svg{ width: 36px; height: 36px; color: var(--card-bg); }
+  .layer .text{ min-width:0; }
+  .tag{
+    margin:0 0 2px;
+    font-size:.72rem;
+    font-weight:800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--c);
+  }
+  .layer h2{
+    margin: 0 0 3px;
+    font-size: 1.2rem;
+  }
+  .layer p.desc{
+    margin:0;
+    font-size: .92rem;
+    color: var(--muted);
+    line-height:1.35;
+  }
+
+  .crossing{
+    text-align:center;
+    margin: 30px 0 22px;
+  }
+  .crossing-label{
+    font-size: 1.15rem;
+    margin: 0 0 10px;
+  }
+  .wire-wrap{
+    position:relative;
+    width:100%;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .wire-wrap svg.path{ width:100%; height:auto; display:block; color: var(--muted); }
+  .house{ width:40px; height:40px; }
+  .houses{ display:flex; justify-content:space-between; align-items:center; margin-top:-8px; color: var(--accent); }
+  .dot{
+    position:absolute;
+    top:0; left:0;
+    width:14px; height:14px;
+    border-radius:50%;
+    background: var(--accent);
+    offset-path: path("M10,30 C 70,-10 110,70 180,30 S 290,-10 350,30 S 430,70 470,30");
+    animation: travel 3.2s linear infinite;
+  }
+  @keyframes travel{
+    from{ offset-distance: 0%; }
+    to{ offset-distance: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .dot{ animation: none; offset-distance: 50%; }
+  }
+
+  .recap{ margin-top: 18px; }
+  .recap-title{
+    text-align:center;
+    font-weight:800;
+    margin: 0 0 14px;
+  }
+  .recap-row{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content:center;
+    gap: 10px 6px;
+  }
+  .mini{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    width: 72px;
+  }
+  .mini .badge{
+    width: 44px; height:44px;
+  }
+  .mini .badge svg{ width:24px; height:24px; }
+  .mini span{
+    font-size:.68rem;
+    font-weight:700;
+    text-align:center;
+    color: var(--muted);
+  }
+
+  .final-bubble{
+    margin: 20px auto 0;
+    max-width: 360px;
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px 18px;
+    text-align:center;
+  }
+  .final-bubble p{ margin:0; font-size:1.05rem; }
+
+  .footnote{
+    margin-top: 34px;
+    text-align:center;
+    color: var(--muted);
+    font-size: .88rem;
+    line-height:1.5;
+  }
+  .footnote strong{ color: var(--fg); }
+
+  @media (max-width: 420px){
+    .layer{ padding: 12px 14px 12px 10px; gap:12px; }
+    .badge{ width:54px; height:54px; }
+    .badge svg{ width:30px; height:30px; }
+    .layer h2{ font-size:1.05rem; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
+
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+  <defs>
+    <symbol id="icon-7" viewBox="0 0 100 100">
+      <path d="M15 20 H85 A10 10 0 0 1 95 30 V65 A10 10 0 0 1 85 75 H40 L25 90 V75 H15 A10 10 0 0 1 5 65 V30 A10 10 0 0 1 15 20 Z" fill="currentColor"/>
+      <circle cx="33" cy="47" r="5.5" fill="var(--card-bg)"/>
+      <circle cx="50" cy="47" r="5.5" fill="var(--card-bg)"/>
+      <circle cx="67" cy="47" r="5.5" fill="var(--card-bg)"/>
+    </symbol>
+    <symbol id="icon-6" viewBox="0 0 100 100">
+      <rect x="8" y="26" width="46" height="56" rx="8" fill="currentColor" opacity=".55"/>
+      <text x="31" y="62" font-size="26" fill="var(--card-bg)" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800">A</text>
+      <rect x="46" y="18" width="46" height="56" rx="8" fill="currentColor"/>
+      <text x="69" y="54" font-size="18" fill="var(--card-bg)" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800">01</text>
+    </symbol>
+    <symbol id="icon-5" viewBox="0 0 100 100">
+      <circle cx="20" cy="50" r="17" fill="currentColor"/>
+      <circle cx="80" cy="50" r="17" fill="currentColor"/>
+      <line x1="38" y1="50" x2="62" y2="50" stroke="currentColor" stroke-width="7" stroke-dasharray="1 12" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-4" viewBox="0 0 100 100">
+      <rect x="6" y="35" width="26" height="30" rx="5" fill="currentColor"/>
+      <text x="19" y="56" font-size="16" fill="var(--card-bg)" text-anchor="middle" font-weight="800">1</text>
+      <rect x="37" y="35" width="26" height="30" rx="5" fill="currentColor"/>
+      <text x="50" y="56" font-size="16" fill="var(--card-bg)" text-anchor="middle" font-weight="800">2</text>
+      <rect x="68" y="35" width="26" height="30" rx="5" fill="currentColor"/>
+      <text x="81" y="56" font-size="16" fill="var(--card-bg)" text-anchor="middle" font-weight="800">3</text>
+    </symbol>
+    <symbol id="icon-3" viewBox="0 0 100 100">
+      <path d="M50 8 C28 8 12 24 12 45 C12 72 50 92 50 92 C50 92 88 72 88 45 C88 24 72 8 50 8 Z" fill="currentColor"/>
+      <circle cx="50" cy="45" r="15" fill="var(--card-bg)"/>
+    </symbol>
+    <symbol id="icon-2" viewBox="0 0 100 100">
+      <path d="M12 32 H58 L92 50 L58 68 H12 Z" fill="currentColor"/>
+      <circle cx="26" cy="50" r="6.5" fill="var(--card-bg)"/>
+    </symbol>
+    <symbol id="icon-1" viewBox="0 0 100 100">
+      <path d="M4 50 H20 L30 20 L46 80 L62 20 L78 80 L88 50 H96" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-house" viewBox="0 0 100 100">
+      <path d="M50 10 L92 42 V88 H8 V42 Z" fill="currentColor"/>
+      <rect x="40" y="58" width="20" height="30" fill="var(--card-bg)"/>
+    </symbol>
+    <symbol id="icon-kid" viewBox="0 0 100 100">
+      <circle cx="50" cy="28" r="20" fill="currentColor"/>
+      <path d="M20 95 C20 65 35 55 50 55 C65 55 80 65 80 95 Z" fill="currentColor"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="page">
+  <header class="hero">
+    <h1>The Internet Post Office</h1>
+    <p class="lede">Jamie wants to say hi to Alex. Meet the seven little helpers who get the message all the way there.</p>
+    <div class="kids">
+      <div class="kid"><svg><use href="#icon-kid"/></svg><span>Jamie</span></div>
+      <div class="kids-arrow">✉</div>
+      <div class="kid"><svg><use href="#icon-kid"/></svg><span>Alex</span></div>
+    </div>
+  </header>
+
+  <section class="stack" aria-label="Seven helpers, packing the message">
+    <article class="layer" style="--c:#F2785C">
+      <div class="badge"><svg><use href="#icon-7"/></svg></div>
+      <div class="text">
+        <p class="tag">Layer 7 · Application</p>
+        <h2>Say It</h2>
+        <p class="desc">Jamie types: "Hi Alex, want to play?"</p>
+      </div>
+    </article>
+
+    <article class="layer" style="--c:#F4A261">
+      <div class="badge"><svg><use href="#icon-6"/></svg></div>
+      <div class="text">
+        <p class="tag">Layer 6 · Presentation</p>
+        <h2>Turn It into Code</h2>
+        <p class="desc">A helper turns the words into a code every computer understands.</p>
+      </div>
+    </article>
+
+    <article class="layer" style="--c:#E9C46A">
+      <div class="badge"><svg><use href="#icon-5"/></svg></div>
+      <div class="text">
+        <p class="tag">Layer 5 · Session</p>
+        <h2>Hold the Line</h2>
+        <p class="desc">A helper keeps the chat open, so Jamie and Alex can keep talking.</p>
+      </div>
+    </article>
+
+    <article class="layer" style="--c:#8AB17D">
+      <div class="badge"><svg><use href="#icon-4"/></svg></div>
+      <div class="text">
+        <p class="tag">Layer 4 · Transport</p>
+        <h2>Cut &amp; Number It</h2>
+        <p class="desc">A helper slices the message into little numbered pieces, so none get lost.</p>
+      </div>
+    </article>
+
+    <article class="layer" style="--c:#4D908E">
+      <div class="badge"><svg><use href="#icon-3"/></svg></div>
+      <div class="text">
+        <p class="tag">Layer 3 · Network</p>
+        <h2>Add Alex's Town</h2>
+        <p class="desc">A helper writes Alex's address, so every piece knows which way to go.</p>
+      </div>
+    </article>
+
+    <article class="layer" style="--c:#577590">
+      <div class="badge"><svg><use href="#icon-2"/></svg></div>
+      <div class="text">
+        <p class="tag">Layer 2 · Data Link</p>
+        <h2>Tag the Next Stop</h2>
+        <p class="desc">A helper tags each piece with directions to the very next delivery truck.</p>
+      </div>
+    </article>
+
+    <article class="layer" style="--c:#355070">
+      <div class="badge"><svg><use href="#icon-1"/></svg></div>
+      <div class="text">
+        <p class="tag">Layer 1 · Physical</p>
+        <h2>Zoom Along the Wire</h2>
+        <p class="desc">The pieces become tiny signals, zipping through a wire, Wi-Fi, or light.</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="crossing">
+    <p class="crossing-label">Whoosh! Off across the internet to Alex's house!</p>
+    <div class="wire-wrap">
+      <svg class="path" viewBox="0 0 480 60" aria-hidden="true">
+        <path d="M10,30 C 70,-10 110,70 180,30 S 290,-10 350,30 S 430,70 470,30" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+      </svg>
+      <div class="dot"></div>
+      <div class="houses">
+        <svg class="house"><use href="#icon-house"/></svg>
+        <svg class="house"><use href="#icon-house"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="recap" aria-label="Seven helpers again, unwrapping the message">
+    <p class="recap-title">Now Alex's helpers unwrap it all, backwards!</p>
+    <div class="recap-row">
+      <div class="mini"><div class="badge" style="--c:#355070"><svg><use href="#icon-1"/></svg></div><span>Signal</span></div>
+      <div class="mini"><div class="badge" style="--c:#577590"><svg><use href="#icon-2"/></svg></div><span>Tag</span></div>
+      <div class="mini"><div class="badge" style="--c:#4D908E"><svg><use href="#icon-3"/></svg></div><span>Address</span></div>
+      <div class="mini"><div class="badge" style="--c:#8AB17D"><svg><use href="#icon-4"/></svg></div><span>Pieces</span></div>
+      <div class="mini"><div class="badge" style="--c:#E9C46A"><svg><use href="#icon-5"/></svg></div><span>Call</span></div>
+      <div class="mini"><div class="badge" style="--c:#F4A261"><svg><use href="#icon-6"/></svg></div><span>Code</span></div>
+      <div class="mini"><div class="badge" style="--c:#F2785C"><svg><use href="#icon-7"/></svg></div><span>Message!</span></div>
+    </div>
+    <div class="final-bubble">
+      <p>Alex sees: "Hi Jamie, yes let's play!"</p>
+    </div>
+  </section>
+
+  <footer class="footnote">
+    <p>All seven helpers working together like this is called the <strong>OSI Model</strong>. Your computer uses it every single time you send anything online.</p>
+  </footer>
+</div>
+
+</body></html>

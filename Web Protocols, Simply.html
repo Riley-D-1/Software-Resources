@@ -1,0 +1,314 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Web Protocols, Simply</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a picture-book — one big drawing per protocol, a one-line story under it, grouped by job */
+:root{
+  --bg:#EEF3F9; --card:#FFFFFF; --ink:#1C2440; --muted:#5A6482; --line:#D5DDEA;
+  --blue:#2F6FEB; --green:#1E9E6A; --orange:#E57A1F; --pink:#D9437A; --violet:#7A55D6; --teal:#138C99;
+  --display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121726; --card:#1B2236; --ink:#E8ECF6; --muted:#9AA4C0; --line:#2E3852;
+  --blue:#6E9BFF; --green:#3CC98F; --orange:#F5A04F; --pink:#F06B9C; --violet:#A486F2; --teal:#3BBFCC; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121726; --card:#1B2236; --ink:#E8ECF6; --muted:#9AA4C0; --line:#2E3852;
+  --blue:#6E9BFF; --green:#3CC98F; --orange:#F5A04F; --pink:#F06B9C; --violet:#A486F2; --teal:#3BBFCC; color-scheme:dark}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5}
+.wrap{max-width:1120px;margin:0 auto;padding-block:40px 64px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:48px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,6vw,3.6rem);font-weight:700}
+h2{font-size:1.7rem;font-weight:600}
+h3{font-size:1.5rem;font-weight:600}
+p{margin:0}
+.lede{font-size:1.2rem;color:var(--muted);max-width:52ch}
+header{display:grid;gap:12px}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+section{display:grid;gap:20px}
+.sec-head{display:grid;gap:4px}
+
+/* svg helpers */
+svg{display:block;width:100%;height:auto}
+.st{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.fc{fill:var(--card)} .fi{fill:var(--ink)} .fa{fill:var(--a)} .ft{fill:color-mix(in srgb,var(--a) 22%,var(--card))}
+.sa{fill:none;stroke:var(--a);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.dash{stroke-dasharray:6 7}
+.t{fill:var(--ink);font-family:var(--mono);font-size:11px}
+.tb{fill:var(--ink);font-family:var(--display);font-weight:600;font-size:14px}
+.tw{fill:var(--card);font-family:var(--display);font-weight:700;font-size:15px}
+.ok{fill:none;stroke:var(--green);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* stack picture */
+.stack{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:center;
+  background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px}
+.stack .txt{display:grid;gap:10px;min-width:0}
+@media (max-width:720px){.stack{grid-template-columns:1fr}}
+
+/* journey */
+.journey{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;list-style:none;margin:0;padding:0}
+.journey li{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:8px;align-content:start}
+.journey .n{font-family:var(--display);font-weight:700;font-size:2rem;color:var(--a);line-height:1}
+.journey b{font-family:var(--display);font-size:1.15rem;font-weight:600}
+.journey span{color:var(--muted);font-size:.98rem}
+@media (max-width:820px){.journey{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:420px){.journey{grid-template-columns:1fr}}
+
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:grid;grid-template-rows:auto 1fr}
+.pic{background:color-mix(in srgb,var(--a) 10%,var(--card));padding:14px 14px 8px;border-bottom:1px solid var(--line)}
+.body{padding:16px 18px 20px;display:grid;gap:8px;align-content:start}
+.name{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.name h3{color:var(--a)}
+.full{font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.02em}
+.like{font-size:.95rem;color:var(--muted)}
+.like b{color:var(--ink)}
+footer{color:var(--muted);font-size:.95rem;border-top:1px solid var(--line);padding-top:20px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Explain it like I'm five</div>
+  <h1>How computers talk on the web</h1>
+  <p class="lede">A <b>protocol</b> is just an agreed set of manners. Both sides follow the same rules, so the message makes sense when it arrives.</p>
+</header>
+
+<!-- STACK -->
+<div class="stack">
+  <svg viewBox="0 0 320 250" role="img" aria-label="Protocols stacked like blocks: IP at the bottom, TCP and UDP above, TLS, then HTTP and WebSocket on top">
+    <g style="--a:var(--violet)"><rect class="fa" x="40" y="20" width="118" height="44" rx="8"/><text class="tw" x="99" y="47" text-anchor="middle">HTTP</text></g>
+    <g style="--a:var(--violet)"><rect class="ft" x="162" y="20" width="118" height="44" rx="8"/><text class="tb" x="221" y="47" text-anchor="middle">WebSocket</text></g>
+    <g style="--a:var(--green)"><rect class="fa" x="40" y="72" width="240" height="44" rx="8"/><text class="tw" x="160" y="99" text-anchor="middle">TLS (the lock)</text></g>
+    <g style="--a:var(--orange)"><rect class="fa" x="40" y="124" width="160" height="44" rx="8"/><text class="tw" x="120" y="151" text-anchor="middle">TCP</text></g>
+    <g style="--a:var(--orange)"><rect class="ft" x="204" y="124" width="76" height="44" rx="8"/><text class="tb" x="242" y="151" text-anchor="middle">UDP</text></g>
+    <g style="--a:var(--blue)"><rect class="fa" x="40" y="176" width="240" height="44" rx="8"/><text class="tw" x="160" y="203" text-anchor="middle">IP (the address)</text></g>
+    <path class="st" d="M20 236 H300"/>
+    <text class="t" x="296" y="40" text-anchor="end" style="display:none">.</text>
+  </svg>
+  <div class="txt">
+    <h2>They stack like blocks</h2>
+    <p>Each block does one small job and trusts the block under it.</p>
+    <p class="like"><b>Bottom:</b> get it to the right house.<br><b>Middle:</b> make sure nothing is lost, and lock it.<br><b>Top:</b> what the message actually says.</p>
+  </div>
+</div>
+
+<!-- JOURNEY -->
+<section>
+  <div class="sec-head"><div class="eyebrow">What happens when you type cats.com</div><h2>One trip, four steps</h2></div>
+  <ol class="journey">
+    <li style="--a:var(--teal)"><div class="n">1</div><b>DNS</b><span>"Where does cats.com live?" Gets a number back.</span></li>
+    <li style="--a:var(--orange)"><div class="n">2</div><b>TCP</b><span>"Hello?" "Hello!" "Ready." A line is open.</span></li>
+    <li style="--a:var(--green)"><div class="n">3</div><b>TLS</b><span>Both sides agree on a secret lock.</span></li>
+    <li style="--a:var(--violet)"><div class="n">4</div><b>HTTP</b><span>"Page, please." "Here you go!"</span></li>
+  </ol>
+</section>
+
+<!-- GROUP 1 -->
+<section>
+  <div class="sec-head"><div class="eyebrow">Group 1</div><h2>Finding and delivering</h2></div>
+  <div class="grid">
+
+    <article class="card" style="--a:var(--blue)">
+      <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="An envelope addressed to house 42 travelling to the house">
+        <path class="ft st" d="M22 72 L60 40 L98 72 V116 H22 Z"/>
+        <rect class="fc st" x="50" y="88" width="20" height="28" rx="2"/>
+        <rect class="fa" x="44" y="60" width="32" height="18" rx="4"/><text class="tw" x="60" y="74" text-anchor="middle" style="font-size:13px">42</text>
+        <path class="sa dash" d="M118 60 C110 44 100 40 92 48"/>
+        <rect class="fc st" x="112" y="62" width="74" height="48" rx="4"/>
+        <path class="st" d="M112 64 L149 90 L186 64"/>
+        <text class="t" x="149" y="124" text-anchor="middle">to: house 42</text>
+      </svg></div>
+      <div class="body"><div class="name"><h3>IP</h3><span class="full">Internet Protocol</span></div>
+        <p>Every computer gets a house number. IP writes it on the envelope.</p>
+        <p class="like"><b>Like:</b> the address on a letter.</p></div>
+    </article>
+
+    <article class="card" style="--a:var(--teal)">
+      <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="A phone book that turns a name into a number">
+        <path class="fc st" d="M100 22 C80 14 46 14 22 22 V112 C46 104 80 104 100 112 Z"/>
+        <path class="ft st" d="M100 22 C120 14 154 14 178 22 V112 C154 104 120 104 100 112 Z"/>
+        <text class="tb" x="61" y="56" text-anchor="middle">cats.com</text>
+        <path class="sa" d="M40 70 H82"/><path class="sa" d="M74 63 L82 70 L74 77"/>
+        <text class="t" x="139" y="58" text-anchor="middle">93.184.</text>
+        <text class="t" x="139" y="74" text-anchor="middle">216.34</text>
+        <path class="st" d="M120 90 H158"/>
+      </svg></div>
+      <div class="body"><div class="name"><h3>DNS</h3><span class="full">Domain Name System</span></div>
+        <p>You remember names. Computers need numbers. DNS looks the name up.</p>
+        <p class="like"><b>Like:</b> a phone book for websites.</p></div>
+    </article>
+
+    <article class="card" style="--a:var(--orange)">
+      <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="Three numbered boxes, each with a tick, and a 'got it' arrow going back">
+        <path class="st" d="M10 104 H190"/>
+        <rect class="ft st" x="22" y="60" width="44" height="40" rx="4"/><text class="tb" x="44" y="86" text-anchor="middle">1</text>
+        <rect class="ft st" x="78" y="60" width="44" height="40" rx="4"/><text class="tb" x="100" y="86" text-anchor="middle">2</text>
+        <rect class="ft st" x="134" y="60" width="44" height="40" rx="4"/><text class="tb" x="156" y="86" text-anchor="middle">3</text>
+        <path class="ok" d="M36 44 L42 50 L54 36"/><path class="ok" d="M92 44 L98 50 L110 36"/><path class="ok" d="M148 44 L154 50 L166 36"/>
+        <path class="sa dash" d="M176 22 H30"/><path class="sa" d="M38 15 L30 22 L38 29"/>
+        <text class="t" x="104" y="16" text-anchor="middle">got it!</text>
+      </svg></div>
+      <div class="body"><div class="name"><h3>TCP</h3><span class="full">Transmission Control Protocol</span></div>
+        <p>Cuts a message into numbered pieces. Checks every piece arrived, in order.</p>
+        <p class="like"><b>Like:</b> a careful courier who wants a signature.</p></div>
+    </article>
+
+    <article class="card" style="--a:var(--orange)">
+      <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="Balls thrown fast across, one drops and nobody stops">
+        <circle class="ft st" cx="30" cy="90" r="14"/>
+        <path class="st" d="M30 104 V118"/>
+        <path class="sa dash" d="M46 80 C80 30 140 30 176 70"/>
+        <circle class="fa" cx="78" cy="48" r="7"/><circle class="fa" cx="112" cy="40" r="7"/><circle class="fa" cx="146" cy="48" r="7"/><circle class="fa" cx="172" cy="66" r="7"/>
+        <circle class="fa" cx="118" cy="102" r="7"/>
+        <path class="st" d="M112 56 L116 86" style="stroke-dasharray:3 5"/>
+        <text class="t" x="132" y="122">oops, keep going</text>
+      </svg></div>
+      <div class="body"><div class="name"><h3>UDP</h3><span class="full">User Datagram Protocol</span></div>
+        <p>Throws pieces fast and never checks. Losing one is fine if speed matters more.</p>
+        <p class="like"><b>Like:</b> live games and video calls.</p></div>
+    </article>
+
+  </div>
+</section>
+
+<!-- GROUP 2 -->
+<section>
+  <div class="sec-head"><div class="eyebrow">Group 2</div><h2>Talking to websites</h2></div>
+  <div class="grid">
+
+    <article class="card" style="--a:var(--violet)">
+      <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="A person asks GET /cats and a server replies 200 OK">
+        <circle class="ft st" cx="26" cy="74" r="14"/><path class="st" d="M10 116 C12 96 40 96 42 116"/>
+        <rect class="ft st" x="156" y="54" width="34" height="62" rx="4"/>
+        <circle class="fa" cx="166" cy="66" r="3"/><circle class="fa" cx="166" cy="80" r="3"/><circle class="fa" cx="166" cy="94" r="3"/>
+        <path class="fc st" d="M46 16 H126 V44 H64 L54 54 V44 H46 Z"/><text class="t" x="86" y="34" text-anchor="middle">GET /cats</text>
+        <path class="fa" d="M70 62 H150 V90 H140 L132 100 V90 H70 Z"/><text class="tw" x="110" y="81" text-anchor="middle" style="font-size:13px">200 OK</text>
+      </svg></div>
+      <div class="body"><div class="name"><h3>HTTP</h3><span class="full">HyperText Transfer Protocol</span></div>
+        <p>You ask for a page. The server answers with a code and the page.</p>
+        <p class="like"><b>Like:</b> ordering from a waiter. 200 = "here it is", 404 = "we don't have that".</p></div>
+    </article>
+
+    <article class="card" style="--a:var(--green)">
+      <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="A letter inside a locked box, with a sneaky eye that cannot see in">
+        <rect class="ft st" x="54" y="50" width="92" height="66" rx="8"/>
+        <path class="st" d="M82 50 V36 C82 18 118 18 118 36 V50"/>
+        <rect class="fa" x="86" y="70" width="28" height="26" rx="4"/><circle class="fc" cx="100" cy="80" r="4"/><rect class="fc" x="98" y="82" width="4" height="8"/>
+        <path class="st" d="M160 40 C170 30 186 30 194 40 C186 50 170 50 160 40 Z"/><circle class="fi" cx="177" cy="40" r="4"/>
+        <path class="st" d="M162 58 L192 26" style="stroke:var(--pink)"/>
+        <text class="t" x="20" y="40">https://</text>
+      </svg></div>
+      <div class="body"><div class="name"><h3>HTTPS / TLS</h3><span class="full">HTTP + Transport Layer Security</span></div>
+        <p>Same as HTTP, but every message goes in a locked box only the two of you can open.</p>
+        <p class="like"><b>Like:</b> the padlock in your browser bar.</p></div>
+    </article>
+
+    <article class="card" style="--a:var(--violet)">
+      <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="Two tin cans joined by a string, messages flowing both ways">
+        <path class="ft st" d="M14 50 L44 56 V94 L14 100 Z"/>
+        <path class="ft st" d="M186 50 L156 56 V94 L186 100 Z"/>
+        <path class="sa" d="M44 75 C74 60 126 90 156 75"/>
+        <path class="st" d="M70 40 H120"/><path class="st" d="M112 33 L120 40 L112 47"/>
+        <path class="st" d="M130 112 H80"/><path class="st" d="M88 105 L80 112 L88 119"/>
+        <text class="t" x="100" y="26" text-anchor="middle">stays open</text>
+      </svg></div>
+      <div class="body"><div class="name"><h3>WebSocket</h3><span class="full">two-way open line</span></div>
+        <p>HTTP hangs up after each answer. A WebSocket stays on the line so both sides can talk any time.</p>
+        <p class="like"><b>Like:</b> chat apps and live scores.</p></div>
+    </article>
+
+    <article class="card" style="--a:var(--blue)">
+      <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="A road with three lanes; a stuck car in one lane does not block the others">
+        <path class="st" d="M8 26 H192"/><path class="st" d="M8 112 H192"/>
+        <path class="st dash" d="M8 55 H192"/><path class="st dash" d="M8 84 H192"/>
+        <rect class="ft st" x="40" y="32" width="36" height="18" rx="5"/>
+        <rect class="fa" x="130" y="32" width="36" height="18" rx="5"/>
+        <rect class="fa" x="96" y="61" width="36" height="18" rx="5"/>
+        <rect class="fa" x="150" y="90" width="36" height="18" rx="5"/>
+        <path class="st" d="M84 40 H100" style="stroke:var(--pink)"/><text class="t" x="12" y="20">stuck</text>
+        <path class="sa" d="M60 70 H86"/><path class="sa" d="M114 99 H142"/>
+      </svg></div>
+      <div class="body"><div class="name"><h3>HTTP/3 &amp; QUIC</h3><span class="full">the newer, faster HTTP</span></div>
+        <p>Runs on UDP with its own checking. One slow piece no longer holds up all the others.</p>
+        <p class="like"><b>Like:</b> a road with many lanes instead of one.</p></div>
+    </article>
+
+  </div>
+</section>
+
+<!-- GROUP 3 -->
+<section>
+  <div class="sec-head"><div class="eyebrow">Group 3</div><h2>Other jobs</h2></div>
+  <div class="grid">
+
+    <article class="card" style="--a:var(--pink)">
+      <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="An envelope goes into a mailbox, then out to a phone">
+        <rect class="fc st" x="8" y="40" width="50" height="34" rx="3"/><path class="st" d="M8 42 L33 60 L58 42"/>
+        <path class="sa" d="M64 57 H84"/><path class="sa" d="M77 50 L85 57 L77 64"/>
+        <path class="ft st" d="M92 48 C92 30 132 30 132 48 V80 H92 Z"/><path class="st" d="M112 80 V116"/>
+        <path class="st" d="M132 46 V30 H146 V38 H132" style="fill:var(--a)"/>
+        <path class="sa" d="M138 62 H158"/><path class="sa" d="M151 55 L159 62 L151 69"/>
+        <rect class="fc st" x="164" y="40" width="28" height="48" rx="5"/><path class="st" d="M174 82 H182"/>
+        <text class="t" x="34" y="100" text-anchor="middle">SMTP</text><text class="t" x="168" y="108" text-anchor="middle">IMAP</text>
+      </svg></div>
+      <div class="body"><div class="name"><h3>SMTP &amp; IMAP</h3><span class="full">email</span></div>
+        <p>SMTP posts your email. IMAP lets your phone and laptop read the same mailbox.</p>
+        <p class="like"><b>Like:</b> dropping a letter in, then checking your box.</p></div>
+    </article>
+
+    <article class="card" style="--a:var(--teal)">
+      <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="A truck carrying folders">
+        <rect class="ft st" x="16" y="42" width="104" height="60" rx="4"/>
+        <path class="fc st" d="M120 60 H156 L178 80 V102 H120 Z"/><path class="st" d="M132 66 H152 L164 78 H132 Z"/>
+        <circle class="fc st" cx="46" cy="106" r="11"/><circle class="fc st" cx="152" cy="106" r="11"/>
+        <path class="fa" d="M30 58 H48 L52 63 H72 V88 H30 Z"/>
+        <path class="fa" d="M66 52 H84 L88 57 H108 V82 H66 Z" style="opacity:.7"/>
+        <path class="st" d="M10 120 H190"/>
+      </svg></div>
+      <div class="body"><div class="name"><h3>FTP / SFTP</h3><span class="full">File Transfer Protocol</span></div>
+        <p>Moves whole files between computers. SFTP is the locked, safe version.</p>
+        <p class="like"><b>Like:</b> a moving truck for files.</p></div>
+    </article>
+
+    <article class="card" style="--a:var(--green)">
+      <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="A laptop with a key, connected by a long locked line to a far-away server">
+        <rect class="fc st" x="12" y="50" width="62" height="40" rx="4"/><path class="st" d="M4 98 H82"/>
+        <text class="t" x="22" y="74" style="fill:var(--a)">&gt;_</text>
+        <path class="sa dash" d="M80 70 C110 70 120 50 146 50"/>
+        <rect class="ft st" x="150" y="26" width="38" height="78" rx="4"/>
+        <path class="st" d="M158 42 H180 M158 56 H180 M158 70 H180"/>
+        <circle class="fa" cx="104" cy="96" r="9"/><path class="st" d="M112 96 H134 M126 96 V104 M132 96 V102" style="stroke:var(--a)"/>
+      </svg></div>
+      <div class="body"><div class="name"><h3>SSH</h3><span class="full">Secure Shell</span></div>
+        <p>Type commands on a computer far away, safely, with a secret key.</p>
+        <p class="like"><b>Like:</b> a locked remote control.</p></div>
+    </article>
+
+    <article class="card" style="--a:var(--pink)">
+      <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="Two screens with faces talking directly; a server in the middle only helps them meet">
+        <rect class="ft st" x="8" y="34" width="60" height="46" rx="5"/><circle class="fc st" cx="38" cy="54" r="9"/><path class="st" d="M24 76 C26 66 50 66 52 76"/>
+        <rect class="ft st" x="132" y="34" width="60" height="46" rx="5"/><circle class="fc st" cx="162" cy="54" r="9"/><path class="st" d="M148 76 C150 66 174 66 176 76"/>
+        <path class="sa" d="M72 57 H128"/><path class="sa" d="M80 50 L72 57 L80 64"/><path class="sa" d="M120 50 L128 57 L120 64"/>
+        <rect class="fc st dash" x="88" y="94" width="24" height="26" rx="3"/>
+        <path class="st dash" d="M60 84 L88 102 M140 84 L112 102" style="stroke-width:2"/>
+        <text class="t" x="100" y="22" text-anchor="middle">direct</text>
+      </svg></div>
+      <div class="body"><div class="name"><h3>WebRTC</h3><span class="full">Web Real-Time Communication</span></div>
+        <p>A server helps two browsers find each other. Then they talk straight to each other.</p>
+        <p class="like"><b>Like:</b> video calls in the browser.</p></div>
+    </article>
+
+  </div>
+</section>
+
+<footer>The one sentence to remember: <b>IP</b> finds the house, <b>TCP</b> makes sure nothing gets lost, <b>TLS</b> locks it, <b>HTTP</b> is what you say.</footer>
+</div>
+
+</body></html>

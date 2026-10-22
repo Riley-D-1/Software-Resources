@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SQL Table Editor</title>
+<style>
+  :root{
+    --bg: #0e1013;
+    --panel: #15181c;
+    --panel-2: #1b1f24;
+    --line: #2a2f36;
+    --text: #e6e8eb;
+    --text-dim: #8b929c;
+    --accent: #5fc9a8;
+    --accent-dim: #2f4a41;
+    --err: #e0705f;
+    --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, Menlo, monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    background:var(--bg); color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+  }
+  #app{
+    display:flex; flex-direction:column; height:100vh;
+  }
+  header{
+    padding:14px 18px; border-bottom:1px solid var(--line);
+    display:flex; align-items:baseline; gap:10px;
+  }
+  header .title{ font-weight:600; font-size:14px; letter-spacing:0.02em; }
+  header .sub{ color:var(--text-dim); font-size:11px; }
+  #status-dot{
+    width:7px;height:7px;border-radius:50%;background:var(--text-dim);
+    display:inline-block; margin-right:6px;
+  }
+  #status-dot.ok{ background:var(--accent); }
+  #status-dot.err{ background:var(--err); }
+
+  main{ flex:1; display:flex; overflow:hidden; }
+
+  #sidebar{
+    width:300px; flex-shrink:0; border-right:1px solid var(--line);
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  #tables-list{ overflow-y:auto; padding:10px; flex:1; }
+  .table-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:6px;
+    padding:8px 10px; margin-bottom:8px;
+  }
+  .table-card .row1{ display:flex; justify-content:space-between; align-items:center; }
+  .table-card .tname{ color:var(--accent); font-weight:600; }
+  .table-card .meta{ color:var(--text-dim); font-size:11px; margin-top:2px; }
+  .table-card button.rm{
+    background:none; border:none; color:var(--text-dim); cursor:pointer;
+    font-family:var(--mono); font-size:11px;
+  }
+  .table-card button.rm:hover{ color:var(--err); }
+  #empty-hint{ color:var(--text-dim); font-size:11.5px; padding:6px 4px; line-height:1.5; }
+
+  #add-table{
+    border-top:1px solid var(--line); padding:12px; flex-shrink:0;
+  }
+  #add-table label{ font-size:11px; color:var(--text-dim); display:block; margin-bottom:4px; }
+  #add-table input[type=text]{
+    width:100%; background:var(--panel-2); border:1px solid var(--line); color:var(--text);
+    padding:6px 8px; border-radius:4px; font-family:var(--mono); font-size:12.5px; margin-bottom:8px;
+  }
+  #paste-area{
+    width:100%; height:90px; background:var(--panel-2); border:1px solid var(--line);
+    color:var(--text); padding:6px 8px; border-radius:4px; font-family:var(--mono);
+    font-size:12px; resize:vertical; margin-bottom:8px;
+  }
+  #paste-hint{ font-size:10.5px; color:var(--text-dim); margin-bottom:8px; line-height:1.4; }
+  #add-table button{
+    width:100%; background:var(--accent-dim); border:1px solid var(--accent);
+    color:var(--accent); padding:7px; border-radius:4px; font-family:var(--mono);
+    font-size:12px; cursor:pointer; font-weight:600;
+  }
+  #add-table button:hover{ background:var(--accent); color:#0e1013; }
+
+  #right{ flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  #query-panel{ border-bottom:1px solid var(--line); padding:12px 16px; flex-shrink:0; }
+  #query-panel .label-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  #query-panel label{ font-size:11px; color:var(--text-dim); }
+  #run-btn{
+    background:var(--accent); color:#0e1013; border:none; padding:7px 16px;
+    border-radius:4px; font-family:var(--mono); font-weight:700; font-size:12px; cursor:pointer;
+  }
+  #run-btn:hover{ opacity:0.85; }
+  #run-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+  #sql-input{
+    width:100%; height:100px; background:var(--panel); border:1px solid var(--line);
+    color:var(--text); padding:10px; border-radius:6px; font-family:var(--mono);
+    font-size:13px; resize:vertical; line-height:1.5;
+  }
+  #hint-row{ margin-top:6px; font-size:10.5px; color:var(--text-dim); }
+  #hint-row code{ color:var(--accent); }
+
+  #results{ flex:1; overflow:auto; padding:14px 16px; }
+  #results table{ border-collapse:collapse; width:max-content; min-width:100%; font-size:12px; }
+  #results th, #results td{
+    border:1px solid var(--line); padding:5px 10px; text-align:left; white-space:nowrap;
+  }
+  #results th{ background:var(--panel-2); color:var(--accent); position:sticky; top:0; }
+  #results tr:nth-child(even) td{ background:rgba(255,255,255,0.02); }
+  #msg{ color:var(--text-dim); font-size:12px; padding:4px 0; }
+  #msg.err{ color:var(--err); white-space:pre-wrap; }
+  #msg.ok{ color:var(--accent); }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <span id="status-dot"></span>
+    <span class="title">SQL Table Editor</span>
+    <span class="sub">paste Word/Excel tables → query with SQL</span>
+  </header>
+  <main>
+    <div id="sidebar">
+      <div id="tables-list">
+        <div id="empty-hint">No tables yet. Paste a table below to get started — copy rows straight out of Word or Excel, headers in the first row.</div>
+      </div>
+      <div id="add-table">
+        <label>Table name</label>
+        <input type="text" id="tname-input" placeholder="e.g. employees" />
+        <label>Paste table data</label>
+        <textarea id="paste-area" placeholder="Paste directly from a Word/Excel table. First row = column headers."></textarea>
+        <div id="paste-hint">Tab-separated (Word/Excel paste) or comma-separated both work. First row is used as headers.</div>
+        <button id="add-btn">Add / Replace Table</button>
+      </div>
+    </div>
+    <div id="right">
+      <div id="query-panel">
+        <div class="label-row">
+          <label>SQL query</label>
+          <button id="run-btn">Run ▸</button>
+        </div>
+        <textarea id="sql-input" spellcheck="false">SELECT * FROM sqlite_master WHERE type='table';</textarea>
+        <div id="hint-row">Standard SQLite syntax. Table/column names with spaces need <code>"double quotes"</code>. Try <code>SELECT * FROM your_table LIMIT 20;</code></div>
+      </div>
+      <div id="results">
+        <div id="msg">Add a table on the left, then run a query.</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+<script>
+let SQL = null;
+let db = null;
+let tables = {}; // name -> {rows, cols}
+
+const statusDot = document.getElementById('status-dot');
+const tablesList = document.getElementById('tables-list');
+const emptyHint = document.getElementById('empty-hint');
+const tnameInput = document.getElementById('tname-input');
+const pasteArea = document.getElementById('paste-area');
+const addBtn = document.getElementById('add-btn');
+const runBtn = document.getElementById('run-btn');
+const sqlInput = document.getElementById('sql-input');
+const resultsEl = document.getElementById('results');
+
+function setMsg(text, cls){
+  resultsEl.innerHTML = '';
+  const d = document.createElement('div');
+  d.id = 'msg';
+  if(cls) d.className = cls;
+  d.textContent = text;
+  resultsEl.appendChild(d);
+}
+
+async function init(){
+  try{
+    SQL = await initSqlJs({ locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${f}` });
+    db = new SQL.Database();
+    statusDot.className = 'ok';
+    runBtn.disabled = false;
+    setMsg('Engine ready. Add a table on the left, then run a query.');
+  }catch(e){
+    statusDot.className = 'err';
+    setMsg('Failed to load SQL engine: ' + e.message, 'err');
+  }
+}
+runBtn.disabled = true;
+init();
+
+function detectDelimiter(text){
+  const firstLine = text.split(/\r?\n/)[0] || '';
+  const tabCount = (firstLine.match(/\t/g) || []).length;
+  const commaCount = (firstLine.match(/,/g) || []).length;
+  if(tabCount >= commaCount) return '\t';
+  return ',';
+}
+
+function parseCsvLine(line, delim){
+  // simple parser that also handles quoted commas for csv paste
+  if(delim === '\t') return line.split('\t').map(s => s.trim());
+  const out = [];
+  let cur = '', inQ = false;
+  for(let i=0;i<line.length;i++){
+    const c = line[i];
+    if(c === '"'){
+      if(inQ && line[i+1] === '"'){ cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if(c === ',' && !inQ){
+      out.push(cur.trim()); cur = '';
+    } else cur += c;
+  }
+  out.push(cur.trim());
+  return out;
+}
+
+function sanitizeIdent(s){
+  s = s.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+  if(!s) s = 'col';
+  if(/^[0-9]/.test(s)) s = 'c_' + s;
+  return s;
+}
+
+function parseTable(raw){
+  const lines = raw.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if(lines.length < 1) throw new Error('No data found in paste.');
+  const delim = detectDelimiter(raw);
+  const rows = lines.map(l => parseCsvLine(l, delim));
+  let headers = rows[0].map((h,i) => sanitizeIdent(h || ('col'+(i+1))));
+  // dedupe headers
+  const seen = {};
+  headers = headers.map(h => {
+    if(seen[h] === undefined){ seen[h]=0; return h; }
+    seen[h]++; return h + '_' + seen[h];
+  });
+  const dataRows = rows.slice(1).map(r => {
+    while(r.length < headers.length) r.push('');
+    return r.slice(0, headers.length);
+  });
+  return { headers, dataRows };
+}
+
+function inferType(values){
+  let allInt = true, allNum = true;
+  for(const v of values){
+    if(v === '' || v === null) continue;
+    if(!/^-?\d+$/.test(v)) allInt = false;
+    if(isNaN(Number(v))) allNum = false;
+  }
+  if(allInt) return 'INTEGER';
+  if(allNum) return 'REAL';
+  return 'TEXT';
+}
+
+function addTable(name, raw){
+  const { headers, dataRows } = parseTable(raw);
+  const colTypes = headers.map((h, ci) => inferType(dataRows.map(r => r[ci])));
+
+  db.run(`DROP TABLE IF EXISTS "${name}";`);
+  const colDefs = headers.map((h,i) => `"${h}" ${colTypes[i]}`).join(', ');
+  db.run(`CREATE TABLE "${name}" (${colDefs});`);
+
+  const placeholders = headers.map(() => '?').join(',');
+  const stmt = db.prepare(`INSERT INTO "${name}" VALUES (${placeholders})`);
+  for(const row of dataRows){
+    const vals = row.map((v, i) => {
+      if(v === '') return null;
+      if(colTypes[i] === 'INTEGER') return parseInt(v, 10);
+      if(colTypes[i] === 'REAL') return parseFloat(v);
+      return v;
+    });
+    stmt.run(vals);
+  }
+  stmt.free();
+
+  tables[name] = { cols: headers, rowCount: dataRows.length };
+  renderTablesList();
+}
+
+function removeTable(name){
+  db.run(`DROP TABLE IF EXISTS "${name}";`);
+  delete tables[name];
+  renderTablesList();
+}
+
+function renderTablesList(){
+  const names = Object.keys(tables);
+  tablesList.innerHTML = '';
+  if(names.length === 0){
+    tablesList.appendChild(emptyHint);
+    return;
+  }
+  names.forEach(name => {
+    const t = tables[name];
+    const card = document.createElement('div');
+    card.className = 'table-card';
+    card.innerHTML = `
+      <div class="row1">
+        <span class="tname">${name}</span>
+        <button class="rm" data-name="${name}">remove</button>
+      </div>
+      <div class="meta">${t.rowCount} rows · ${t.cols.length} cols</div>
+      <div class="meta">${t.cols.join(', ')}</div>
+    `;
+    tablesList.appendChild(card);
+  });
+  tablesList.querySelectorAll('button.rm').forEach(btn => {
+    btn.addEventListener('click', () => removeTable(btn.dataset.name));
+  });
+}
+
+addBtn.addEventListener('click', () => {
+  const name = sanitizeIdent(tnameInput.value || '');
+  const raw = pasteArea.value;
+  if(!name){ setMsg('Give the table a name first.', 'err'); return; }
+  if(!raw.trim()){ setMsg('Paste some table data first.', 'err'); return; }
+  try{
+    addTable(name, raw);
+    setMsg(`Added table "${name}" (${tables[name].rowCount} rows).`, 'ok');
+    tnameInput.value = '';
+    pasteArea.value = '';
+    sqlInput.value = `SELECT * FROM "${name}" LIMIT 50;`;
+  }catch(e){
+    setMsg('Could not parse/add table: ' + e.message, 'err');
+  }
+});
+
+function runQuery(){
+  if(!db){ setMsg('Engine still loading…', 'err'); return; }
+  const sql = sqlInput.value.trim();
+  if(!sql){ return; }
+  try{
+    const res = db.exec(sql);
+    if(res.length === 0){
+      setMsg('Query ran successfully. No rows returned.', 'ok');
+      return;
+    }
+    resultsEl.innerHTML = '';
+    res.forEach(result => {
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const trh = document.createElement('tr');
+      result.columns.forEach(c => {
+        const th = document.createElement('th');
+        th.textContent = c;
+        trh.appendChild(th);
+      });
+      thead.appendChild(trh);
+      table.appendChild(thead);
+      const tbody = document.createElement('tbody');
+      result.values.forEach(row => {
+        const tr = document.createElement('tr');
+        row.forEach(v => {
+          const td = document.createElement('td');
+          td.textContent = v === null ? 'NULL' : v;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      resultsEl.appendChild(table);
+      const cap = document.createElement('div');
+      cap.id = 'msg';
+      cap.className = 'ok';
+      cap.textContent = `${result.values.length} row(s) returned.`;
+      resultsEl.appendChild(cap);
+    });
+  }catch(e){
+    setMsg('SQL error: ' + e.message, 'err');
+  }
+}
+
+runBtn.addEventListener('click', runQuery);
+sqlInput.addEventListener('keydown', (e) => {
+  if((e.metaKey || e.ctrlKey) && e.key === 'Enter'){
+    e.preventDefault();
+    runQuery();
+  }
+});
+</script>
+</body>
+</html>

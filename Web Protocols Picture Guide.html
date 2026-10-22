@@ -1,0 +1,272 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Web Protocols Picture Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: picture-book cards — wide cards for the two "big system" topics, a 2x2 grid between, cheat-sheet table at the end */
+:root{
+  --bg:#EEF3F9; --card:#FFFFFF; --ink:#1C2440; --muted:#5A6482; --line:#D5DDEA;
+  --blue:#2F6FEB; --green:#1E9E6A; --orange:#E57A1F; --pink:#D9437A; --violet:#7A55D6; --teal:#138C99; --red:#D23B3B;
+  --display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121726; --card:#1B2236; --ink:#E8ECF6; --muted:#9AA4C0; --line:#2E3852;
+  --blue:#6E9BFF; --green:#3CC98F; --orange:#F5A04F; --pink:#F06B9C; --violet:#A486F2; --teal:#3BBFCC; --red:#F26A6A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121726; --card:#1B2236; --ink:#E8ECF6; --muted:#9AA4C0; --line:#2E3852;
+  --blue:#6E9BFF; --green:#3CC98F; --orange:#F5A04F; --pink:#F06B9C; --violet:#A486F2; --teal:#3BBFCC; --red:#F26A6A; color-scheme:dark}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding-block:40px 64px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:40px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:700}
+h2{font-size:1.7rem;font-weight:600}
+h3{font-size:1.6rem;font-weight:600;color:var(--a)}
+p{margin:0}
+header{display:grid;gap:12px}
+.lede{font-size:1.2rem;color:var(--muted);max-width:54ch}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+svg{display:block;width:100%;height:auto}
+.st{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.fc{fill:var(--card)} .fi{fill:var(--ink)} .fa{fill:var(--a)} .ft{fill:color-mix(in srgb,var(--a) 22%,var(--card))}
+.sa{fill:none;stroke:var(--a);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.sr{fill:none;stroke:var(--red);stroke-width:3.5;stroke-linecap:round}
+.ok{fill:none;stroke:var(--green);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+.dash{stroke-dasharray:6 7}
+.t{fill:var(--ink);font-family:var(--mono);font-size:11px}
+.tm{fill:var(--muted);font-family:var(--mono);font-size:10px}
+.tb{fill:var(--ink);font-family:var(--display);font-weight:600;font-size:15px}
+.tw{fill:var(--card);font-family:var(--display);font-weight:700;font-size:14px}
+
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.wide{grid-column:1/-1}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:grid;grid-template-rows:auto 1fr}
+.pic{background:color-mix(in srgb,var(--a) 10%,var(--card));padding:18px 18px 10px;border-bottom:1px solid var(--line)}
+.wide .pic svg{max-width:760px;margin:0 auto}
+.body{padding:18px 20px 22px;display:grid;gap:12px;align-content:start}
+.big{font-size:1.1rem}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.chip{border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:grid;gap:4px;min-width:0}
+.chip b{font-family:var(--display);font-size:1.1rem;font-weight:600}
+.chip span{color:var(--muted);font-size:.95rem}
+.port{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.chip.good{border-color:color-mix(in srgb,var(--green) 55%,var(--line))}
+.chip.bad{border-color:color-mix(in srgb,var(--red) 45%,var(--line))}
+.tag{display:inline-block;font-family:var(--mono);font-size:.68rem;padding:1px 7px;border-radius:99px;margin-left:6px;vertical-align:2px}
+.tag.g{background:color-mix(in srgb,var(--green) 18%,var(--card));color:var(--green)}
+.tag.r{background:color-mix(in srgb,var(--red) 16%,var(--card));color:var(--red)}
+.like{color:var(--muted);font-size:.98rem}
+.like b{color:var(--ink)}
+
+.tablebox{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:18px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.98rem}
+th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+td:first-child{font-family:var(--display);font-weight:600;white-space:nowrap}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+footer{color:var(--muted);border-top:1px solid var(--line);padding-top:20px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Explain it like I'm five</div>
+  <h1>Six web protocols, in pictures</h1>
+  <p class="lede">A protocol is a set of rules both computers agree on. Most of these come in pairs: <b>the plain version</b> and <b>the locked, safe version</b>.</p>
+</header>
+
+<div class="grid">
+
+<!-- TCP/IP -->
+<article class="card wide" style="--a:var(--orange)">
+  <div class="pic"><svg viewBox="0 0 380 150" role="img" aria-label="A message HELLO is cut into three numbered pieces, each labelled with address 42, and put back together at house 42">
+    <rect class="fc st" x="8" y="52" width="66" height="40" rx="4"/><text class="tb" x="41" y="77" text-anchor="middle">HELLO</text>
+    <path class="st" d="M80 72 H96"/><path class="st" d="M90 66 L97 72 L90 78"/>
+    <g>
+      <rect class="ft st" x="106" y="14" width="56" height="34" rx="4"/><text class="tb" x="122" y="36" text-anchor="middle">HE</text>
+      <rect class="fa" x="140" y="8" width="28" height="16" rx="4"/><text class="tw" x="154" y="20" text-anchor="middle" style="font-size:10px">→42</text>
+      <circle class="fi" cx="110" cy="10" r="9"/><text class="tw" x="110" y="14" text-anchor="middle" style="font-size:11px">1</text>
+    </g>
+    <g>
+      <rect class="ft st" x="106" y="58" width="56" height="34" rx="4"/><text class="tb" x="122" y="80" text-anchor="middle">LL</text>
+      <rect class="fa" x="140" y="52" width="28" height="16" rx="4"/><text class="tw" x="154" y="64" text-anchor="middle" style="font-size:10px">→42</text>
+      <circle class="fi" cx="110" cy="54" r="9"/><text class="tw" x="110" y="58" text-anchor="middle" style="font-size:11px">2</text>
+    </g>
+    <g>
+      <rect class="ft st" x="106" y="102" width="56" height="34" rx="4"/><text class="tb" x="122" y="124" text-anchor="middle">O</text>
+      <rect class="fa" x="140" y="96" width="28" height="16" rx="4"/><text class="tw" x="154" y="108" text-anchor="middle" style="font-size:10px">→42</text>
+      <circle class="fi" cx="110" cy="98" r="9"/><text class="tw" x="110" y="102" text-anchor="middle" style="font-size:11px">3</text>
+    </g>
+    <path class="sa dash" d="M170 30 C210 20 230 50 262 62"/>
+    <path class="sa dash" d="M170 75 H262"/>
+    <path class="sa dash" d="M170 120 C210 132 236 100 262 88"/>
+    <path class="ft st" d="M268 70 L296 46 L324 70 V108 H268 Z"/>
+    <rect class="fa" x="284" y="78" width="24" height="16" rx="3"/><text class="tw" x="296" y="90" text-anchor="middle" style="font-size:11px">42</text>
+    <rect class="fc st" x="300" y="116" width="66" height="28" rx="4"/><text class="tb" x="333" y="135" text-anchor="middle">HELLO</text>
+    <path class="ok" d="M340 98 L347 105 L362 88"/>
+  </svg></div>
+  <div class="body">
+    <p class="big">Two rules that always work as a team.</p>
+    <div class="pair">
+      <div class="chip"><b>IP</b><span>Writes the address on every piece, so it reaches the right computer.</span></div>
+      <div class="chip"><b>TCP</b><span>Cuts the message into numbered pieces, checks they all arrived, and puts them back in order.</span></div>
+    </div>
+    <p class="like"><b>Like:</b> posting a big jigsaw puzzle in numbered envelopes. IP is the address. TCP is the numbers and the "did it all arrive?" check.</p>
+  </div>
+</article>
+
+<!-- DNS -->
+<article class="card" style="--a:var(--teal)">
+  <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="A phone book turns the name google.com into a number">
+    <path class="fc st" d="M100 20 C80 12 46 12 22 20 V110 C46 102 80 102 100 110 Z"/>
+    <path class="ft st" d="M100 20 C120 12 154 12 178 20 V110 C154 102 120 102 100 110 Z"/>
+    <text class="tb" x="61" y="56" text-anchor="middle">google.com</text>
+    <path class="sa" d="M42 70 H82"/><path class="sa" d="M74 63 L82 70 L74 77"/>
+    <text class="t" x="139" y="58" text-anchor="middle">142.250.</text>
+    <text class="t" x="139" y="74" text-anchor="middle">70.78</text>
+  </svg></div>
+  <div class="body">
+    <h3>DNS</h3>
+    <p class="big">You know the name. Computers need the number. DNS looks it up.</p>
+    <p class="like"><b>Like:</b> your phone's contact list. You tap "Mum", it dials the number. <span class="port">Port 53</span></p>
+  </div>
+</article>
+
+<!-- HTTP / HTTPS -->
+<article class="card" style="--a:var(--violet)">
+  <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="A postcard anyone can read next to a sealed, locked envelope">
+    <rect class="fc st" x="10" y="34" width="80" height="54" rx="4"/>
+    <text class="t" x="18" y="56">pass: cat123</text><path class="st" d="M18 70 H72" style="stroke-width:2"/>
+    <path class="st" d="M34 106 C42 98 58 98 66 106 C58 114 42 114 34 106 Z"/><circle class="fi" cx="50" cy="106" r="4"/>
+    <text class="tm" x="50" y="26" text-anchor="middle">HTTP</text>
+    <rect class="ft st" x="110" y="34" width="80" height="54" rx="4"/><path class="st" d="M110 36 L150 64 L190 36"/>
+    <rect class="fa" x="138" y="78" width="24" height="22" rx="4"/><path class="st" d="M143 78 V71 C143 62 157 62 157 71 V78"/>
+    <text class="tm" x="150" y="26" text-anchor="middle">HTTPS</text>
+    <path class="st" d="M134 106 C142 98 158 98 166 106 C158 114 142 114 134 106 Z"/><path class="sr" d="M136 118 L164 96"/>
+  </svg></div>
+  <div class="body">
+    <h3>HTTP vs HTTPS</h3>
+    <p class="big">How your browser asks a website for a page, and gets it back.</p>
+    <div class="pair">
+      <div class="chip bad"><b>HTTP<span class="tag r">open</span></b><span>A postcard. Anyone on the way can read it.</span><span class="port">Port 80</span></div>
+      <div class="chip good"><b>HTTPS<span class="tag g">locked</span></b><span>A sealed envelope. Only the website can open it.</span><span class="port">Port 443</span></div>
+    </div>
+  </div>
+</article>
+
+<!-- SSL / TLS -->
+<article class="card" style="--a:var(--green)">
+  <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="An old cracked padlock labelled SSL next to a new shiny padlock labelled TLS">
+    <rect class="fc st" x="22" y="56" width="58" height="48" rx="6"/>
+    <path class="st" d="M34 56 V42 C34 22 68 22 68 42 V50"/>
+    <path class="sr" d="M44 64 L54 78 L46 86 L56 100"/>
+    <text class="tm" x="51" y="122" text-anchor="middle">SSL · old</text>
+    <rect class="fa" x="120" y="56" width="58" height="48" rx="6"/>
+    <path class="st" d="M132 56 V42 C132 22 166 22 166 42 V56"/>
+    <circle class="fc" cx="149" cy="76" r="5"/><rect class="fc" x="147" y="78" width="4" height="12"/>
+    <path class="sa" d="M184 34 L190 28 M188 46 L196 46 M114 34 L108 28"/>
+    <text class="tm" x="149" y="122" text-anchor="middle">TLS · new</text>
+  </svg></div>
+  <div class="body">
+    <h3>SSL vs TLS</h3>
+    <p class="big">This is the lock itself. It is what puts the "S" in HTTPS.</p>
+    <div class="pair">
+      <div class="chip bad"><b>SSL<span class="tag r">retired</span></b><span>The first lock. It has known holes. Don't use it.</span></div>
+      <div class="chip good"><b>TLS<span class="tag g">use this</span></b><span>The newer, stronger lock. Used today.</span></div>
+    </div>
+    <p class="like">People still say "SSL certificate" out of habit. They really mean TLS.</p>
+  </div>
+</article>
+
+<!-- FTP / SFTP -->
+<article class="card" style="--a:var(--teal)">
+  <div class="pic"><svg viewBox="0 0 200 130" role="img" aria-label="An open truck showing its files next to a locked truck">
+    <rect class="ft st" x="6" y="44" width="58" height="42" rx="3"/>
+    <path class="fa" d="M14 56 H26 L29 60 H42 V78 H14 Z"/><path class="fa" d="M36 52 H48 L51 56 H58 V72 H36 Z" style="opacity:.7"/>
+    <path class="fc st" d="M64 56 H82 L94 70 V86 H64 Z"/>
+    <circle class="fc st" cx="24" cy="92" r="8"/><circle class="fc st" cx="80" cy="92" r="8"/>
+    <text class="tm" x="50" y="120" text-anchor="middle">FTP</text>
+    <rect class="fa" x="106" y="44" width="58" height="42" rx="3"/>
+    <rect class="fc st" x="124" y="58" width="22" height="18" rx="3"/><path class="st" d="M128 58 V53 C128 46 142 46 142 53 V58"/>
+    <path class="fc st" d="M164 56 H182 L194 70 V86 H164 Z"/>
+    <circle class="fc st" cx="124" cy="92" r="8"/><circle class="fc st" cx="180" cy="92" r="8"/>
+    <text class="tm" x="150" y="120" text-anchor="middle">SFTP</text>
+  </svg></div>
+  <div class="body">
+    <h3>FTP vs SFTP</h3>
+    <p class="big">Moving whole files from one computer to another, like uploading a website.</p>
+    <div class="pair">
+      <div class="chip bad"><b>FTP<span class="tag r">open</span></b><span>Open truck. Files and even your password can be seen.</span><span class="port">Ports 20, 21</span></div>
+      <div class="chip good"><b>SFTP<span class="tag g">locked</span></b><span>Locked truck. Everything is scrambled on the way.</span><span class="port">Port 22</span></div>
+    </div>
+  </div>
+</article>
+
+<!-- EMAIL -->
+<article class="card wide" style="--a:var(--pink)">
+  <div class="pic"><svg viewBox="0 0 400 170" role="img" aria-label="SMTP sends mail to the mail server. POP3 takes mail away to one computer and empties the box. IMAP leaves mail on the server so a phone and laptop both see it.">
+    <rect class="fc st" x="8" y="62" width="58" height="38" rx="3"/><path class="st" d="M8 64 L37 84 L66 64"/>
+    <path class="sa" d="M72 81 H128"/><path class="sa" d="M120 74 L128 81 L120 88"/>
+    <text class="tb" x="100" y="72" text-anchor="middle" style="fill:var(--a)">SMTP</text>
+    <text class="tm" x="100" y="100" text-anchor="middle">send</text>
+    <path class="ft st" d="M136 60 L170 36 L204 60 V112 H136 Z"/>
+    <rect class="fc st" x="152" y="72" width="36" height="24" rx="2"/><path class="st" d="M152 74 L170 86 L188 74" style="stroke-width:2"/>
+    <text class="tm" x="170" y="128" text-anchor="middle">mail server</text>
+    <path class="sa" d="M210 56 C240 30 262 28 290 30"/><path class="sa" d="M282 23 L290 30 L282 37"/>
+    <text class="tb" x="246" y="22" text-anchor="middle" style="fill:var(--a)">POP3</text>
+    <rect class="fc st" x="300" y="14" width="46" height="30" rx="3"/><path class="st" d="M294 48 H352"/>
+    <rect class="fa" x="312" y="20" width="22" height="14" rx="2"/>
+    <text class="tm" x="372" y="34">take it,</text><text class="tm" x="372" y="46">box empty</text>
+    <path class="sa" d="M210 102 C240 132 262 136 290 132"/><path class="sa" d="M282 125 L290 132 L282 139"/>
+    <path class="sa" d="M290 132 C262 140 240 140 214 112" style="stroke-dasharray:4 6"/>
+    <text class="tb" x="246" y="158" text-anchor="middle" style="fill:var(--a)">IMAP</text>
+    <rect class="fc st" x="296" y="112" width="46" height="30" rx="3"/><path class="st" d="M290 146 H348"/>
+    <rect class="fa" x="308" y="118" width="22" height="14" rx="2"/>
+    <rect class="fc st" x="354" y="108" width="22" height="38" rx="4"/><rect class="fa" x="358" y="118" width="14" height="10" rx="2"/>
+    <text class="tm" x="296" y="164">synced, copy stays</text>
+  </svg></div>
+  <div class="body">
+    <p class="big">Email uses one rule to <b>send</b> and a choice of two to <b>collect</b>.</p>
+    <div class="pair">
+      <div class="chip"><b>SMTP</b><span>Sends your email to the mail server. Think "<b>S</b>MTP = <b>S</b>end".</span><span class="port">Port 25 / 587</span></div>
+      <div class="chip bad"><b>POP3</b><span>Takes the mail home to one device and empties the box. Other devices can't see it.</span><span class="port">Port 110 / 995 locked</span></div>
+      <div class="chip good"><b>IMAP</b><span>Mail stays on the server. Phone and laptop see the same inbox.</span><span class="port">Port 143 / 993 locked</span></div>
+    </div>
+    <p class="like"><b>Like:</b> SMTP is the postie. POP3 is emptying your letterbox into your bag. IMAP is reading your letters at the post office from any branch.</p>
+  </div>
+</article>
+
+</div>
+
+<section style="display:grid;gap:16px">
+  <div><div class="eyebrow">Cheat sheet</div><h2>All of it on one card</h2></div>
+  <div class="tablebox"><table>
+    <thead><tr><th>Protocol</th><th>Its one job</th><th>Port</th><th>Locked?</th></tr></thead>
+    <tbody>
+      <tr><td>IP</td><td>Address each piece</td><td class="n">n/a</td><td>No</td></tr>
+      <tr><td>TCP</td><td>Number, check and reorder pieces</td><td class="n">n/a</td><td>No</td></tr>
+      <tr><td>DNS</td><td>Turn a name into a number</td><td class="n">53</td><td>No</td></tr>
+      <tr><td>HTTP</td><td>Fetch web pages</td><td class="n">80</td><td>No</td></tr>
+      <tr><td>HTTPS</td><td>Fetch web pages, locked</td><td class="n">443</td><td>Yes (TLS)</td></tr>
+      <tr><td>SSL</td><td>The old lock</td><td class="n">n/a</td><td>Retired</td></tr>
+      <tr><td>TLS</td><td>The lock used today</td><td class="n">n/a</td><td>It is the lock</td></tr>
+      <tr><td>FTP</td><td>Move files</td><td class="n">20, 21</td><td>No</td></tr>
+      <tr><td>SFTP</td><td>Move files, locked</td><td class="n">22</td><td>Yes (SSH)</td></tr>
+      <tr><td>SMTP</td><td>Send email</td><td class="n">25, 587</td><td>Can be</td></tr>
+      <tr><td>POP3</td><td>Download email, one device</td><td class="n">110, 995</td><td>995 is</td></tr>
+      <tr><td>IMAP</td><td>Sync email, all devices</td><td class="n">143, 993</td><td>993 is</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<footer><b>The pattern to remember:</b> an "S" in the name usually means Secure. HTTP → HTTPS, FTP → SFTP. The lock doing that job is TLS.</footer>
+</div>
+
+</body></html>
